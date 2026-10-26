@@ -28,6 +28,10 @@ FONTS = ROOT / "static" / "fonts"
 
 REVEAL = "https://cdn.jsdelivr.net/npm/reveal.js@5.1.0"
 
+#: Canvas accepts files or a URL, not both, so the repository has to be
+#: legible inside the deck itself or the graders cannot clone it.
+REPO_URL = "github.com/christinamcbride/house-ledger"
+
 
 def b64(path: Path) -> str:
     return base64.b64encode(path.read_bytes()).decode()
@@ -323,6 +327,10 @@ html,body{{background:var(--night)}}
 .rule{{font-family:var(--soft);font-size:31px;color:var(--night);background:var(--mint);
   border:4px solid var(--night);box-shadow:5px 5px 0 var(--cyan);padding:11px 20px;
   line-height:1.3;display:inline-block}}
+.repo{{font-family:var(--px);font-size:16px;color:var(--mint);margin:14px 0 0;
+  display:inline-flex;align-items:center;gap:12px;letter-spacing:.02em;
+  border:3px solid var(--mint);padding:9px 13px}}
+.repo .pub{{font-size:12px;background:var(--mint);color:var(--night);padding:3px 7px}}
 .tag{{font-family:var(--px);font-size:13px;background:var(--mint);color:var(--night);
   border:3px solid var(--night);padding:5px 9px;letter-spacing:.06em}}
 .tag.b{{background:var(--berry);color:#fff}}
@@ -351,8 +359,9 @@ table.t tr:last-child td{{border-bottom:none;font-weight:700}}
     <div>
       <p class="lede">Four roommates, one lease, and an&nbsp;agreement<br>
       that finally does something.</p>
-      <p style="margin-top:30px;font-size:24px;color:#cfcbe4">
+      <p style="margin-top:26px;font-size:22px;color:#cfcbe4">
         Christina McBride &middot; 888 State Street, New Haven</p>
+      <p class="repo">{REPO_URL}<span class="pub">PUBLIC</span></p>
       <div style="margin-top:24px">
         <span class="tag">gpt-6-luna</span>
         <span class="tag">pydantic-ai</span>
@@ -585,8 +594,10 @@ table.t tr:last-child td{{border-bottom:none;font-weight:700}}
       </ul>
     </div>
   </div>
-  <p style="margin-top:34px"><span class="rule">Change the agreement,
-  not the code.</span></p>
+  <div style="margin-top:28px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+    <span class="rule">Change the agreement, not the code.</span>
+    <p class="repo" style="margin:0">{REPO_URL}<span class="pub">PUBLIC</span></p>
+  </div>
 </section>
 
 </div></div>

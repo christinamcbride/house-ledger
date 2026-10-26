@@ -52,6 +52,11 @@
   blockquote { margin: .6em 0 1em 2em; font-style: italic; }
   .missing { color: #b00; font-style: italic; }
   .todo { background: #ffe9a8; padding: 2px 4px; }
+  .repo { border: 1.5px solid #000; padding: .5em .9em; margin: 0 0 1.4em;
+           line-height: 1.5; page-break-inside: avoid; }
+  .repo p { margin: .3em 0; }
+  .repo .clone { font-family: "Courier New", monospace; font-size: 10.5pt;
+                  line-height: 1.55; margin: .6em 0; }
   @media print { html, body { background:#fff; } body { padding:0; max-width:none; } }
 </style>
 </head>
@@ -60,14 +65,23 @@
 <h1>The House Ledger</h1>
 <p class="byline">
   Christina McBride &middot; MGT 409, Fall 2026<br>
-  Repository: <a href="https://github.com/christinamcbride/house-ledger">https://github.com/christinamcbride/house-ledger</a><br>
-  Runs locally at <code>http://localhost:8000</code>; it is not publicly hosted,
-  because the ledger holds four people's money and the app has no multi-tenant
-  isolation yet.<br>
   <span class="one-liner">The House Ledger reads the receipts, bills and
   emails a shared flat actually gets, and works out who owes what directly
   from the agreement its tenants signed.</span>
 </p>
+
+<div class="repo">
+  <p><strong>Repository (public):</strong>
+     <a href="https://github.com/christinamcbride/house-ledger">https://github.com/christinamcbride/house-ledger</a></p>
+  <p class="clone">git clone https://github.com/christinamcbride/house-ledger.git<br>
+     cd house-ledger &amp;&amp; python3 -m pip install -r requirements.txt<br>
+     cp .env.example .env &nbsp;<em>(add your PORTKEY_API_KEY)</em><br>
+     python3 scripts/seed_ledger.py &amp;&amp; python3 app.py</p>
+  <p>Then open <strong>http://localhost:8000</strong> and sign in as Christina,
+  Sophia, Aletta or Angelika, password <strong>statestreet</strong>. There is
+  no build step and no Node. The app is not hosted publicly, because the
+  ledger holds four people's money and has no multi-tenant isolation yet.</p>
+</div>
 
 <h2>1. Motivation</h2>
 
