@@ -1,0 +1,91 @@
+{
+  "generated": "2026-10-26T13:42:22",
+  "model": "gpt-6-luna",
+  "agent": "house-counsel",
+  "agreement_chars": 7319,
+  "uncached": {
+    "runs": 4,
+    "avg_input": 6026.2,
+    "avg_cached": 0.0,
+    "avg_output": 153.8,
+    "avg_cost_usd": 0.00140128,
+    "avg_ms": 3783,
+    "runs_detail": [
+      {
+        "run": 1,
+        "input_tokens": 6025,
+        "cache_read_tokens": 0,
+        "output_tokens": 156,
+        "cost_usd": 0.001402125,
+        "ms": 4698
+      },
+      {
+        "run": 2,
+        "input_tokens": 6030,
+        "cache_read_tokens": 0,
+        "output_tokens": 160,
+        "cost_usd": 0.00140525,
+        "ms": 3378
+      },
+      {
+        "run": 3,
+        "input_tokens": 6027,
+        "cache_read_tokens": 0,
+        "output_tokens": 149,
+        "cost_usd": 0.001399075,
+        "ms": 3786
+      },
+      {
+        "run": 4,
+        "input_tokens": 6023,
+        "cache_read_tokens": 0,
+        "output_tokens": 150,
+        "cost_usd": 0.001398675,
+        "ms": 3269
+      }
+    ]
+  },
+  "cached": {
+    "runs": 4,
+    "avg_input": 5970.0,
+    "avg_cached": 2732.0,
+    "avg_output": 166.0,
+    "avg_cost_usd": 0.00080737,
+    "avg_ms": 1269,
+    "runs_detail": [
+      {
+        "run": 1,
+        "input_tokens": 5970,
+        "cache_read_tokens": 2732,
+        "output_tokens": 166,
+        "cost_usd": 0.00080737,
+        "ms": 4094
+      },
+      {
+        "run": 2,
+        "input_tokens": 5970,
+        "cache_read_tokens": 2732,
+        "output_tokens": 166,
+        "cost_usd": 0.00080737,
+        "ms": 347
+      },
+      {
+        "run": 3,
+        "input_tokens": 5970,
+        "cache_read_tokens": 2732,
+        "output_tokens": 166,
+        "cost_usd": 0.00080737,
+        "ms": 365
+      },
+      {
+        "run": 4,
+        "input_tokens": 5970,
+        "cache_read_tokens": 2732,
+        "output_tokens": 166,
+        "cost_usd": 0.00080737,
+        "ms": 269
+      }
+    ]
+  },
+  "cost_saving_fraction": 0.4238
+}

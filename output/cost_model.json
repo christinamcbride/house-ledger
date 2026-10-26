@@ -1,0 +1,40 @@
+{
+  "assumptions": {
+    "reader": 20,
+    "concierge": 15,
+    "messenger": 4,
+    "house-counsel": 2
+  },
+  "household_size": 4,
+  "per_agent": [
+    {
+      "agent": "reader",
+      "runs_per_month": 20,
+      "usd_per_run": 0.000161,
+      "usd_per_month": 0.003227
+    },
+    {
+      "agent": "concierge",
+      "runs_per_month": 15,
+      "usd_per_run": 0.000269,
+      "usd_per_month": 0.004042
+    },
+    {
+      "agent": "messenger",
+      "runs_per_month": 4,
+      "usd_per_run": 0.00049,
+      "usd_per_month": 0.00196
+    },
+    {
+      "agent": "house-counsel",
+      "runs_per_month": 2,
+      "usd_per_run": 0.000807,
+      "usd_per_month": 0.001614
+    }
+  ],
+  "household_per_month_usd": 0.010843,
+  "per_person_per_month_usd": 0.002711,
+  "at_100_users_per_month_usd": 0.2711,
+  "at_10000_users_per_month_usd": 27.11,
+  "at_10000_users_per_year_usd": 325.3
+}

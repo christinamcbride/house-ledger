@@ -1,0 +1,25 @@
+# Secrets. Never commit these.
+.env
+.env.local
+*.key
+
+# The ledger itself: real household data, and a grader should start from
+# the seeded month rather than from whatever state this machine is in.
+data/house.db
+data/uploads/
+
+# The logs ARE the evidence for the report — real token counts, real costs,
+# real blocked tool calls — so they are committed on purpose. Only the
+# throwaway screenshot scratch is ignored.
+output/shots/_*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# macOS
+.DS_Store

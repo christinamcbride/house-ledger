@@ -1,0 +1,18 @@
+# The house ledger — everything needed to run it.
+#     python3 -m pip install -r requirements.txt
+#     python3 app.py
+#
+# Pinned to what this was built and tested against. There is no front-end
+# build step: the dashboard is one HTML file with its fonts beside it, so
+# there is no Node, npm or bundler anywhere in this list.
+
+pydantic-ai==2.45.0          # the agents
+pydantic==2.13.5
+pydantic-settings==2.15.0    # reads .env here, then one level above
+
+fastapi==0.162.0             # the API and the dashboard
+uvicorn==0.53.0
+python-multipart==0.0.32     # receipt uploads arrive as multipart form data
+
+pypdf==6.16.2                # reading PDF bills
+pillow==12.3.0               # re-encoding uploaded photos to strip EXIF

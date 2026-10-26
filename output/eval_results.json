@@ -1,0 +1,116 @@
+{
+  "generated": "2026-10-26T14:02:08",
+  "model": "gpt-6-luna",
+  "cases": 4,
+  "totals_correct_lean": 4,
+  "totals_correct_with_rules": 4,
+  "readings_in_agreement": 4,
+  "cost_lean_usd": 0.000911,
+  "cost_with_rules_usd": 0.001008,
+  "saving_fraction": 0.0962,
+  "results": [
+    {
+      "document": "r01_stopandshop.png",
+      "printed_total": 46.25,
+      "printed_items": 7,
+      "lean": {
+        "total": 46.25,
+        "total_correct": true,
+        "items_found": 6,
+        "items_correct": false,
+        "merchant": "STOP & SHOP",
+        "cost_usd": 0.000286,
+        "input_tokens": 2179
+      },
+      "with_rules": {
+        "total": 46.25,
+        "total_correct": true,
+        "items_found": 6,
+        "items_correct": false,
+        "merchant": "STOP & SHOP",
+        "cost_usd": 0.000466,
+        "input_tokens": 3955
+      },
+      "flags": [],
+      "same_total": true
+    },
+    {
+      "document": "r02_mcdonalds.png",
+      "printed_total": 16.03,
+      "printed_items": 3,
+      "lean": {
+        "total": 16.03,
+        "total_correct": true,
+        "items_found": 3,
+        "items_correct": true,
+        "merchant": null,
+        "cost_usd": 0.000259,
+        "input_tokens": 2175
+      },
+      "with_rules": {
+        "total": 16.03,
+        "total_correct": true,
+        "items_found": 3,
+        "items_correct": true,
+        "merchant": "M",
+        "cost_usd": 0.000203,
+        "input_tokens": 3951
+      },
+      "flags": [],
+      "same_total": true
+    },
+    {
+      "document": "r03_electric_bill.pdf",
+      "printed_total": 142.8,
+      "printed_items": 3,
+      "lean": {
+        "total": 142.8,
+        "total_correct": true,
+        "items_found": 3,
+        "items_correct": true,
+        "merchant": "UNITED ILLUMINATING",
+        "cost_usd": 9e-05,
+        "input_tokens": 1511
+      },
+      "with_rules": {
+        "total": 142.8,
+        "total_correct": true,
+        "items_found": 3,
+        "items_correct": true,
+        "merchant": "UNITED ILLUMINATING",
+        "cost_usd": 0.000113,
+        "input_tokens": 3287
+      },
+      "flags": [],
+      "same_total": true
+    },
+    {
+      "document": "a09_altered_total.png",
+      "printed_total": 146.25,
+      "printed_items": 7,
+      "lean": {
+        "total": 146.25,
+        "total_correct": true,
+        "items_found": 7,
+        "items_correct": true,
+        "merchant": "STOP & SHOP",
+        "cost_usd": 0.000276,
+        "input_tokens": 1941
+      },
+      "with_rules": {
+        "total": 146.25,
+        "total_correct": true,
+        "items_found": 7,
+        "items_correct": true,
+        "merchant": "STOP & SHOP",
+        "cost_usd": 0.000226,
+        "input_tokens": 3717
+      },
+      "flags": [
+        "total_above_lines",
+        "model_concern"
+      ],
+      "same_total": true
+    }
+  ]
+}

@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>821 State St — house ledger</title>
+<style>
+/* Three pixel faces, served from the repo. Nothing is fetched from a CDN,
+   so the app looks right offline and on a locked-down machine. */
+@font-face{font-family:"Determination";src:url("/static/fonts/determination.ttf") format("truetype");font-display:swap}
+@font-face{font-family:"PixeloidSans";src:url("/static/fonts/PixeloidSans.ttf") format("truetype");font-display:swap}
+@font-face{font-family:"RainyHearts";src:url("/static/fonts/rainyhearts.ttf") format("truetype");font-display:swap}
+:root{
+  /* the house palette */
+  --white:#ffffff; --mint:#6df7c1;  --cyan:#11adc1;  --slate:#606c81;
+  --night:#393457; --teal:#1e8875;  --leaf:#5bb361;  --lime:#a1e55a;
+  --butter:#f7e476;--orange:#f99252;--rose:#cb4d68;  --plum:#6a3771;
+  --berry:#c92464; --pink:#f48cb6;  --peach:#f7b69e; --sage:#9b9c82;
+
+  --ink:var(--night); --muted:var(--slate);
+  --line:var(--night); --faint:#dcd9e6; --wash:#f3f2f8;
+  /* Determination for the game-UI voice: labels, tabs, buttons, headers.
+     PixeloidSans for anything that has to be read carefully — body copy,
+     tables, money. RainyHearts, rounder and friendlier, for the big titles. */
+  --px:"Determination",ui-monospace,"Courier New",monospace;
+  --ui:"PixeloidSans",ui-monospace,Menlo,monospace;
+  --soft:"RainyHearts","Determination",ui-monospace,monospace;
+  --sans:"PixeloidSans",ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --pop:4px 4px 0 var(--night);
+  --pop-sm:3px 3px 0 var(--night);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--ui); font-size:15.5px; line-height:1.6; color:var(--ink);
+  background:var(--night);
+  background-image:
+    linear-gradient(45deg,rgba(255,255,255,.028) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.028) 75%),
+    linear-gradient(45deg,rgba(255,255,255,.028) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.028) 75%);
+  background-size:16px 16px; background-position:0 0,8px 8px;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{margin:0;font-family:var(--px);font-weight:400;line-height:1.4}
+.px{font-family:var(--px)}
+.num{font-variant-numeric:tabular-nums}
+svg.sprite{display:block;image-rendering:pixelated}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px 72px}
+
+/* ---------- header ---------- */
+header{background:var(--night);border-bottom:4px solid var(--mint);position:sticky;top:0;z-index:30}
+.hdr{max-width:1180px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mark{
+  width:48px;height:48px;flex:none;background:var(--mint);color:var(--night);
+  display:grid;place-items:center;font-family:var(--px);font-size:21px;
+  border:3px solid var(--white);box-shadow:4px 4px 0 var(--cyan)
+}
+.hdr h1{font-family:var(--soft);font-size:30px;color:var(--white);letter-spacing:.01em}
+.hdr .sub{font-family:var(--px);font-size:12px;color:var(--mint);letter-spacing:.16em;margin-top:2px}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.chip{
+  font-family:var(--px);font-size:12px;line-height:1.5;padding:6px 10px;color:var(--white);
+  background:#45406a;border:2px solid var(--slate);display:inline-flex;align-items:center;gap:7px
+}
+.chip b{color:var(--mint)}
+.dot{width:8px;height:8px;background:var(--mint);box-shadow:0 0 0 2px var(--night)}
+.dot.off{background:var(--berry);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* ---------- banner ---------- */
+.banner{
+  margin:18px 0 0;padding:13px 15px;border:3px solid var(--night);background:var(--butter);
+  color:var(--night);font-size:13.5px;display:none;box-shadow:var(--pop)
+}
+.banner.on{display:block}
+
+/* ---------- balances ---------- */
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:26px 0 16px}
+.tenant{
+  background:var(--white);border:3px solid var(--night);box-shadow:var(--pop);
+  padding:14px;display:flex;gap:12px;align-items:flex-start;position:relative
+}
+.tenant .sprite{margin-top:2px;transition:transform .12s steps(2)}
+.tenant:hover .sprite{transform:translateY(-3px)}
+.tenant .who{min-width:0;flex:1}
+.tenant .name{font-family:var(--soft);font-size:22px;line-height:1.2}
+.tenant .share{font-size:11.5px;color:var(--muted);margin-top:4px}
+.tenant .amt{font-family:var(--ui);font-weight:700;font-size:23px;margin-top:8px;word-break:break-all}
+.tenant.pos .amt{color:var(--teal)}
+.tenant.neg .amt{color:var(--berry)}
+.tenant .state{font-size:11.5px;color:var(--muted);margin-top:5px}
+.tenant .tag{
+  position:absolute;top:-3px;right:-3px;font-family:var(--px);font-size:11px;padding:2px 7px;
+  color:var(--night);border:3px solid var(--night)
+}
+.tenant.pos .tag{background:var(--mint)}
+.tenant.neg .tag{background:var(--pink)}
+.tenant.sq .tag{background:var(--faint)}
+
+.settle{
+  background:var(--cyan);border:3px solid var(--night);box-shadow:var(--pop);padding:14px 16px
+}
+.settle .lab{font-family:var(--px);font-size:14px;color:var(--white);letter-spacing:.08em;
+  display:block;margin-bottom:11px}
+.settle .pays{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;
+  padding-bottom:2px}
+.settle .pays::-webkit-scrollbar{height:8px}
+.settle .pays::-webkit-scrollbar-thumb{background:var(--night)}
+.pay{cursor:pointer;transition:transform .08s steps(1)}
+.pay:hover{background:var(--wash)}
+/* Pressed, not highlighted. Butter is the draft button's colour and two
+   yellow things in one band read as the same control. */
+.pay[aria-expanded="true"]{background:var(--faint);transform:translate(3px,3px);box-shadow:none}
+.settle .go-draft{margin-top:13px;background:var(--butter)}
+.settle .go-draft:hover{background:var(--lime)}
+.pay{
+  font-size:13px;background:var(--white);border:3px solid var(--night);padding:6px 10px;
+  font-variant-numeric:tabular-nums;box-shadow:var(--pop-sm)
+}
+.pay b{font-weight:700}
+
+/* ---------- why you owe what you owe ---------- */
+#settleDetail:empty{display:none}
+#settleDetail{margin-top:14px}
+.why .owe{color:var(--berry);font-weight:700}
+.why .paid{color:var(--teal);font-weight:700}
+.why tfoot td{border-top:3px solid var(--night);background:var(--wash);font-weight:700}
+.why .note-row td{background:var(--wash);font-size:13px;color:var(--muted);font-weight:400}
+
+/* ---------- tabs ---------- */
+nav.tabs{display:flex;gap:7px;margin:28px 0 0;flex-wrap:wrap}
+.tab{
+  appearance:none;font-family:var(--px);font-size:14px;letter-spacing:.02em;cursor:pointer;
+  background:#45406a;color:#cfcbe4;border:3px solid var(--night);padding:10px 11px;
+  display:inline-flex;align-items:center;gap:8px;box-shadow:var(--pop-sm);
+  transition:transform .08s steps(1),background .1s
+}
+.tab:hover{background:#524c7d;color:var(--white)}
+.tab:active{transform:translate(3px,3px);box-shadow:none}
+.tab[aria-selected="true"]{background:var(--mint);color:var(--night);border-color:var(--night)}
+.count{
+  font-family:var(--ui);font-size:11px;min-width:18px;height:18px;padding:0 4px;background:var(--night);color:var(--mint);
+  display:grid;place-items:center
+}
+.tab[aria-selected="true"] .count{background:var(--night);color:var(--mint)}
+.count.alert{background:var(--berry);color:var(--white)}
+.tab-gap{flex-basis:100%;height:0}
+.tab.lite{font-size:12px;padding:8px 10px;background:transparent;border-color:var(--slate);
+  box-shadow:none;color:#a9a4c4}
+.tab.lite:hover{background:#45406a;color:var(--white)}
+.tab.lite[aria-selected="true"]{background:var(--mint);color:var(--night);border-color:var(--night);
+  box-shadow:var(--pop-sm)}
+.panel{display:none;padding-top:22px}
+.panel.on{display:block}
+
+/* ---------- cards & tables ---------- */
+.card{background:var(--white);border:3px solid var(--night);box-shadow:var(--pop)}
+.card + .card{margin-top:18px}
+.card-h{padding:13px 16px;border-bottom:3px solid var(--night);display:flex;align-items:center;
+  gap:12px;background:var(--wash);flex-wrap:wrap}
+.card-h h3{font-family:var(--soft);font-size:23px;line-height:1.25}
+.card-h .note{font-size:12px;color:var(--muted);margin-left:auto;text-align:right}
+.card-h .note + button{margin-left:14px;flex:none}
+.card-b{padding:16px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{
+  text-align:left;font-family:var(--px);font-size:12px;letter-spacing:.06em;color:var(--white);
+  padding:11px 16px;background:var(--slate)
+}
+td{padding:11px 16px;border-bottom:2px solid var(--faint);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--wash)}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+.sub{font-size:13px;color:var(--muted)}
+.pill{
+  font-family:var(--px);font-size:11px;padding:3px 7px;border:2px solid var(--night);
+  background:var(--white);color:var(--night);white-space:nowrap;display:inline-block
+}
+.pill.posted{background:var(--mint)}
+.pill.pending{background:var(--butter)}
+.pill.disputed{background:var(--peach)}
+.pill.rejected{background:var(--pink)}
+.pill.flagd{background:var(--orange);color:var(--white)}
+/* ---------- categories ---------- */
+.cat{font-family:var(--px);font-size:11px;padding:3px 7px;border:2px solid var(--night);
+  display:inline-block;white-space:nowrap;color:var(--night)}
+.cat.rent{background:var(--plum);color:var(--white)}
+.cat.utilities{background:var(--cyan);color:var(--white)}
+.cat.groceries{background:var(--leaf);color:var(--white)}
+.cat.food{background:var(--orange)}
+.cat.household_supplies{background:var(--lime)}
+.cat.furniture{background:var(--butter)}
+.cat.repairs{background:var(--slate);color:var(--white)}
+.cat.social{background:var(--pink)}
+.cat.personal{background:var(--sage)}
+.cat.guest{background:var(--peach)}
+.cat.fine{background:var(--berry);color:var(--white)}
+.cat.unknown{background:var(--faint)}
+td.stripe{border-left:7px solid var(--faint)}
+
+/* ---------- sortable columns ---------- */
+th.s{cursor:pointer;user-select:none;white-space:nowrap}
+th.s:hover{background:#4f5a6e}
+th.s .ar{display:inline-block;width:0;height:0;margin-left:7px;vertical-align:middle;
+  border-left:5px solid transparent;border-right:5px solid transparent;opacity:.25;
+  border-top:6px solid var(--white)}
+th.s.asc .ar{opacity:1;border-top:none;border-bottom:6px solid var(--mint)}
+th.s.desc .ar{opacity:1;border-top:6px solid var(--mint)}
+.legend{display:flex;gap:7px;flex-wrap:wrap;padding:13px 16px;border-bottom:3px solid var(--night);
+  background:var(--wash);align-items:center}
+.legend .lg{font-family:var(--px);font-size:11px;color:var(--muted);margin-right:3px}
+.legend .cat{cursor:pointer;opacity:.45}
+.legend .cat.on{opacity:1;box-shadow:2px 2px 0 var(--night)}
+
+.detail{background:var(--wash)}
+.detail td{padding:2px 16px 16px}
+.shares{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.sh{
+  font-size:12.5px;background:var(--white);border:2px solid var(--night);padding:6px 9px;
+  font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px
+}
+.sh b{font-weight:700}
+
+/* ---------- who had what ---------- */
+.items{border:3px solid var(--night);background:var(--wash);margin-top:14px}
+.items .ih{font-family:var(--px);font-size:12px;padding:10px 12px;background:var(--night);
+  color:var(--mint);letter-spacing:.05em}
+.item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:2px solid var(--faint)}
+.item:last-of-type{border-bottom:none}
+.item .d{flex:1;min-width:0;font-size:14px}
+.item .a{font-weight:700;font-variant-numeric:tabular-nums}
+.pick{display:flex;gap:4px;flex-wrap:wrap}
+.pick button{font-family:var(--px);font-size:10px;padding:5px 7px;border:2px solid var(--night);
+  background:var(--white);color:var(--muted);cursor:pointer;box-shadow:none}
+.pick button:hover{background:var(--wash)}
+.pick button[aria-pressed="true"]{background:var(--mint);color:var(--night)}
+.pick button.all{border-style:dashed}
+.pick button.all[aria-pressed="true"]{background:var(--cyan);color:var(--white);border-style:solid}
+.items .foot{padding:11px 12px;border-top:3px solid var(--night);display:flex;gap:10px;
+  align-items:center;flex-wrap:wrap}
+
+/* ---------- flags ---------- */
+.flag{
+  display:flex;gap:10px;padding:10px 12px;font-size:13px;margin-top:10px;line-height:1.5;
+  border:3px solid var(--night);background:var(--wash);box-shadow:var(--pop-sm)
+}
+.flag .g{font-family:var(--px);font-size:14px;flex:none;width:21px;height:21px;display:grid;
+  place-items:center;background:var(--night);color:var(--white);margin-top:1px}
+.flag.warn{background:var(--butter)}
+.flag.warn .g{background:var(--orange)}
+.flag.block{background:var(--pink)}
+.flag.block .g{background:var(--berry)}
+.flag.info{background:var(--white)}
+.flag.info .g{background:var(--cyan)}
+.flag.good{background:var(--mint)}
+.flag.good .g{background:var(--teal)}
+
+/* ---------- controls ---------- */
+button.b{
+  appearance:none;font-family:var(--px);font-size:14px;line-height:1.4;padding:9px 12px;cursor:pointer;
+  border:3px solid var(--night);background:var(--white);color:var(--night);box-shadow:var(--pop-sm);
+  transition:transform .08s steps(1)
+}
+button.b:hover{background:var(--wash)}
+button.b:active{transform:translate(3px,3px);box-shadow:none}
+button.b:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:var(--pop-sm)}
+button.b.go{background:var(--mint)}
+button.b.no{background:var(--pink)}
+button.b.gh{background:#45406a;color:var(--white);border-color:var(--white);box-shadow:3px 3px 0 var(--cyan)}
+select,input[type=text]{
+  font-family:var(--ui);font-size:15px;padding:8px 10px;border:3px solid var(--night);
+  background:var(--white);color:var(--ink);box-shadow:var(--pop-sm);appearance:none
+}
+.row-ctl{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+label.lbl{font-family:var(--px);font-size:12px;color:var(--muted);letter-spacing:.06em}
+
+/* ---------- upload ---------- */
+.drop{
+  border:4px dashed var(--slate);padding:34px 20px;text-align:center;background:var(--wash);
+  cursor:pointer;transition:background .12s
+}
+.drop:hover,.drop.over{background:var(--mint);border-color:var(--night)}
+.drop .big{font-family:var(--soft);font-size:26px;line-height:1.3}
+.drop .sm{font-size:12px;color:var(--muted);margin-top:10px}
+
+/* ---------- misc ---------- */
+.empty{padding:44px 20px;text-align:center;color:var(--muted);font-size:13.5px}
+.empty .big{font-family:var(--soft);font-size:26px;color:var(--ink);margin-bottom:10px;line-height:1.3}
+.empty .crew{display:flex;justify-content:center;gap:10px;margin-bottom:16px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kpi{background:var(--white);border:3px solid var(--night);box-shadow:var(--pop);padding:14px}
+.kpi .k{font-family:var(--px);font-size:12px;letter-spacing:.07em;color:var(--muted);line-height:1.45}
+.kpi .v{font-family:var(--ui);font-weight:700;font-size:26px;margin-top:9px;word-break:break-all}
+.kpi .n{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.45}
+.kpi.hl{background:var(--butter)}
+/* ---------- the agreement, as a document ---------- */
+.doc-wrap{display:grid;grid-template-columns:230px 1fr;gap:0;align-items:start}
+.toc{position:sticky;top:96px;padding:18px 16px;border-right:3px solid var(--night);
+  background:var(--wash);align-self:stretch}
+.toc .h{font-family:var(--px);font-size:11px;color:var(--muted);letter-spacing:.07em;
+  margin-bottom:12px}
+.toc a{display:block;font-size:13px;color:var(--ink-2,var(--ink));text-decoration:none;
+  padding:5px 7px;border-left:3px solid transparent;line-height:1.3}
+.toc a:hover{background:var(--mint);border-left-color:var(--night)}
+.toc a .n{font-family:var(--px);font-size:10px;color:var(--muted);margin-right:6px}
+
+.doc{padding:30px 34px;max-height:680px;overflow-y:auto;scroll-behavior:smooth}
+.doc h1{font-family:var(--soft);font-size:38px;line-height:1.15;margin:0 0 6px}
+.doc .signed{font-size:13.5px;color:var(--muted);border-bottom:3px solid var(--night);
+  padding-bottom:18px;margin-bottom:26px}
+.doc h2{font-family:var(--soft);font-size:26px;line-height:1.2;margin:34px 0 12px;
+  display:flex;align-items:baseline;gap:10px;scroll-margin-top:20px}
+.doc h2 .n{font-family:var(--px);font-size:13px;background:var(--night);color:var(--mint);
+  padding:4px 8px;flex:none}
+.doc h2:first-of-type{margin-top:0}
+.doc p{margin:0 0 13px;max-width:68ch;font-size:14.5px;line-height:1.65}
+.doc strong{background:var(--butter);padding:0 3px;font-weight:700;box-decoration-break:clone}
+.doc ul{margin:0 0 15px;padding-left:0;list-style:none;max-width:68ch}
+.doc li{position:relative;padding-left:22px;margin-bottom:7px;font-size:14.5px;line-height:1.6}
+.doc li::before{content:"";position:absolute;left:4px;top:9px;width:7px;height:7px;
+  background:var(--cyan);border:2px solid var(--night)}
+.doc table{margin:6px 0 20px;border:3px solid var(--night)}
+.doc th{font-size:11px;padding:9px 12px}
+.doc td{padding:9px 12px;font-size:13.5px}
+.doc hr{border:none;border-top:3px solid var(--faint);margin:26px 0}
+.doc .signed + hr{display:none}
+.doc code{background:var(--wash);border:2px solid var(--faint);padding:1px 5px;font-size:13px}
+.doc .staples{background:var(--wash);border:3px solid var(--night);padding:14px 16px;
+  margin-bottom:15px;columns:2;column-gap:26px;font-size:14px;line-height:1.7}
+@media (max-width:860px){.doc-wrap{grid-template-columns:1fr}
+  .toc{position:static;border-right:none;border-bottom:3px solid var(--night)}
+  .doc{padding:20px}.doc .staples{columns:1}}
+.draft{border:3px solid var(--night);padding:14px;background:var(--wash);box-shadow:var(--pop-sm)}
+.draft + .draft{margin-top:14px}
+.draft .to{font-family:var(--px);font-size:15px;line-height:1.4}
+.draft .body{white-space:pre-wrap;font-size:13.5px;margin-top:10px}
+.stamp{font-family:var(--px);font-size:11px;padding:4px 7px;background:var(--peach);
+  border:2px solid var(--night);white-space:nowrap}
+.spin{display:inline-block;width:10px;height:10px;background:var(--night);animation:hop .5s steps(4) infinite}
+@keyframes hop{0%{transform:translateY(0)}50%{transform:translateY(-5px)}100%{transform:translateY(0)}}
+footer{margin-top:40px;padding:16px;border:3px solid var(--slate);font-size:12.5px;color:#cfcbe4;background:#45406a}
+footer b{color:var(--mint);font-weight:400;font-family:var(--px);font-size:14px}
+/* ---------- sign in ---------- */
+#gate{position:fixed;inset:0;z-index:60;display:none;place-items:center;padding:24px;
+  background:var(--night);
+  background-image:
+    linear-gradient(45deg,rgba(255,255,255,.028) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.028) 75%),
+    linear-gradient(45deg,rgba(255,255,255,.028) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.028) 75%);
+  background-size:16px 16px;background-position:0 0,8px 8px}
+#gate.on{display:grid}
+.gate-card{background:var(--white);border:4px solid var(--night);box-shadow:8px 8px 0 var(--cyan);
+  padding:26px;width:100%;max-width:430px}
+.gate-card h2{font-family:var(--soft);font-size:34px;line-height:1.2}
+.gate-crew{display:flex;gap:10px;justify-content:center;margin:20px 0 6px}
+.gate-crew button{background:none;border:3px solid transparent;padding:4px;cursor:pointer;
+  display:grid;justify-items:center;gap:4px;font-family:var(--px);font-size:11px;color:var(--muted)}
+.gate-crew button:hover{border-color:var(--faint)}
+.gate-crew button[aria-pressed="true"]{border-color:var(--night);background:var(--mint);color:var(--night)}
+.gate-card input{width:100%;margin-top:6px}
+.gate-err{background:var(--pink);border:3px solid var(--night);padding:10px;font-size:13px;margin-top:14px;display:none}
+.gate-err.on{display:block}
+.gate-hint{font-size:12px;color:var(--muted);margin-top:16px;border-top:2px solid var(--faint);padding-top:12px}
+.me{display:flex;align-items:center;gap:8px;background:#45406a;border:2px solid var(--slate);padding:4px 9px 4px 5px}
+.me .n{font-family:var(--px);font-size:12px;color:var(--white)}
+
+/* ---------- chat ---------- */
+.chat{display:grid;grid-template-rows:1fr auto;height:min(620px,70vh)}
+.log{overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:16px}
+.turn{display:flex;gap:10px;align-items:flex-start;max-width:86%}
+.turn.mine{align-self:flex-end;flex-direction:row-reverse}
+.bubble{border:3px solid var(--night);padding:11px 13px;box-shadow:var(--pop-sm);font-size:13.5px}
+.turn.mine .bubble{background:var(--cyan);color:var(--white)}
+.turn.theirs .bubble{background:var(--white)}
+.turn .av{width:36px;height:46px;flex:none;display:grid;place-items:center}
+.turn .av .mark{width:34px;height:34px;font-size:15px;box-shadow:2px 2px 0 var(--cyan);border-width:2px}
+.ask-row{border-top:3px solid var(--night);padding:14px;display:flex;gap:9px;background:var(--wash)}
+.ask-row input{flex:1}
+.starters{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 14px}
+.starter{font-size:12px;background:var(--butter);border:2px solid var(--night);padding:6px 9px;cursor:pointer;
+  box-shadow:2px 2px 0 var(--night)}
+.starter:hover{background:var(--lime)}
+.mini{border:3px solid var(--night);background:var(--wash);padding:10px;margin-top:10px;font-size:12.5px}
+.mini .top{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.mini .top b{font-size:13px}
+.sigbar{display:flex;gap:6px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.sigdot{width:16px;height:16px;border:2px solid var(--night);background:var(--white)}
+.sigdot.on{background:var(--mint)}
+
+@media (max-width:980px){ .board,.kpis{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:560px){ .board,.kpis{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <h2>821 STATE ST</h2>
+    <div class="sub" style="margin-top:10px">Four people, one ledger. Sign in as yourself —
+      an approval is only worth something if the house knows who gave it.</div>
+    <div class="gate-crew" id="gateCrew"></div>
+    <label class="lbl">PASSWORD</label>
+    <input type="password" id="pw" autocomplete="current-password" placeholder="••••••••">
+    <div class="gate-err" id="gateErr"></div>
+    <button class="b go" id="signin" style="width:100%;margin-top:16px">SIGN IN</button>
+    <div class="gate-hint">Demo accounts for the teaching staff: any of the four names,
+      password <code>statestreet</code>. Stored as PBKDF2-SHA256 with a per-user salt —
+      see <code>auth.py</code>.</div>
+  </div>
+</div>
+
+<header>
+  <div class="hdr">
+    <div class="mark">821</div>
+    <div>
+      <h1>821 State St</h1>
+      <div class="sub">HOUSE LEDGER</div>
+    </div>
+    <div class="hdr-right">
+      <span class="chip"><span class="dot" id="dot"></span><span id="ready">checking</span></span>
+      <span class="chip">MODEL <b id="model">—</b></span>
+      <span class="chip">SPENT <b class="num" id="cost">$0.00</b></span>
+      <span class="me" id="meChip" style="display:none"></span>
+      <button class="b gh" id="logout" style="display:none">LOG OUT</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="banner" id="banner"></div>
+
+  <section class="board" id="board"></section>
+  <div class="settle" id="settle"></div>
+  <div id="settleDetail"></div>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-p="ask" aria-selected="true">ASK THE HOUSE</button>
+    <button class="tab" role="tab" data-p="approvals" aria-selected="false">NEEDS YOU <span class="count" id="c-appr">0</span></button>
+    <button class="tab" role="tab" data-p="upload" aria-selected="false">ADD A DOC</button>
+    <button class="tab" role="tab" data-p="ledger" aria-selected="false">LEDGER <span class="count" id="c-ledger">0</span></button>
+    <span class="tab-gap"></span>
+    <button class="tab lite" role="tab" data-p="disputes" aria-selected="false">DISPUTES <span class="count" id="c-disp">0</span></button>
+    <button class="tab lite" role="tab" data-p="drafts" aria-selected="false">MESSAGES <span class="count" id="c-draft">0</span></button>
+    <button class="tab lite" role="tab" data-p="safety" aria-selected="false">SAFETY <span class="count" id="c-safe">0</span></button>
+    <button class="tab lite" role="tab" data-p="cost" aria-selected="false">COST</button>
+    <button class="tab lite" role="tab" data-p="agreement" aria-selected="false">THE AGREEMENT</button>
+  </nav>
+
+  <section class="panel" id="p-ledger"></section>
+  <section class="panel" id="p-approvals"></section>
+
+  <section class="panel on" id="p-ask">
+    <div class="card">
+      <div class="card-h">
+        <h3>Ask the house</h3>
+        <div class="note">Reads the ledger and the agreement.<br>It cannot send, pay, approve or delete.</div>
+        <button class="b" id="clearChat" style="margin-left:14px">CLEAR</button>
+      </div>
+      <div class="chat">
+        <div class="log" id="chatLog"></div>
+        <div>
+          <div class="starters" id="starters"></div>
+          <div class="ask-row">
+            <input type="text" id="askInput" placeholder="Why do I owe this much?" maxlength="600">
+            <button class="b go" id="askBtn">ASK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-upload">
+    <div class="card">
+      <div class="card-h">
+        <h3>Add a document</h3>
+        <div class="note">Photo, PDF, web page or email.<br>The reader never decides the split.</div>
+      </div>
+      <div class="card-b">
+        <div class="row-ctl" style="margin-bottom:16px">
+          <label class="lbl">PAID BY</label>
+          <select id="paidBy"></select>
+          <label class="lbl" style="margin-left:6px">CATEGORY</label>
+          <select id="cat">
+            <option value="">let the agreement decide</option>
+            <option value="groceries">groceries</option>
+            <option value="food">food (takeaway, restaurants)</option>
+            <option value="household_supplies">household supplies</option>
+            <option value="utilities">utilities</option>
+            <option value="rent">rent</option>
+            <option value="furniture">furniture</option>
+            <option value="repairs">repairs</option>
+            <option value="social">social</option>
+            <option value="personal">personal</option>
+            <option value="guest">guest</option>
+            <option value="fine">fine</option>
+          </select>
+        </div>
+        <div class="drop" id="drop">
+          <div class="big">DROP A RECEIPT HERE</div>
+          <div class="sm">or click to choose · .png .jpg .pdf .html .eml</div>
+          <input type="file" id="file" hidden accept=".png,.jpg,.jpeg,.webp,.pdf,.html,.htm,.eml,.txt,.md">
+        </div>
+        <div class="sub" style="margin-top:12px" id="samples"></div>
+        <div id="uploadOut"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-disputes"></section>
+  <section class="panel" id="p-drafts"></section>
+  <section class="panel" id="p-safety"></section>
+  <section class="panel" id="p-cost"></section>
+
+  <section class="panel" id="p-agreement">
+    <div class="card">
+      <div class="card-h">
+        <h3>The signed house agreement</h3>
+        <div class="note">This document is the policy engine.<br>Change a split by editing it, not the code.</div>
+      </div>
+      <div class="doc-wrap">
+        <nav class="toc" id="toc"><div class="h">CONTENTS</div></nav>
+        <article class="doc" id="agreementText">loading…</article>
+      </div>
+    </div>
+  </section>
+
+  <div style="display:flex;justify-content:flex-end;margin-top:26px">
+    <button class="b" id="reset" style="background:var(--pink)">RESET THE DEMO</button>
+  </div>
+
+  <footer>
+    <b>HOUSE RULE</b> &nbsp;Every split on this page comes from the signed agreement, applied in code.
+    The agents read documents and draft messages. They never move money, and they never send anything.
+  </footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const el = (t, c, h) => { const n = document.createElement(t); if (c) n.className = c; if (h !== undefined) n.innerHTML = h; return n; };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[m]));
+const round2 = n => Math.round(n * 100) / 100;
+const money = n => (n < 0 ? "-$" : "$") + Math.abs(Number(n || 0)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const GLYPH = { block: "X", warn: "!", info: "i", good: "+" };
+
+/* Each category gets one colour, used on the chip and as a stripe down the
+   row, so a month of spending can be read by shape rather than by reading
+   every line. The chip always carries the category name as well — colour on
+   its own is not a label, and two of these are hard to tell apart without it. */
+const CAT_COLOUR = {
+  rent: "#6a3771", utilities: "#11adc1", groceries: "#5bb361", food: "#f99252",
+  household_supplies: "#a1e55a", furniture: "#f7e476", repairs: "#606c81",
+  social: "#f48cb6", personal: "#9b9c82", guest: "#f7b69e",
+  fine: "#c92464", unknown: "#dcd9e6",
+};
+const HOUSE = "the house";
+const SUMMARY = /^\s*(sub)?total\b|^\s*tax\b|^\s*amount due|^\s*balance\b|^\s*change\b|^\s*cash\b|^\s*card\b|^\s*credit\b|^\s*debit\b|^\s*tender|^\s*payment\b|^\s*tip\b|^\s*gratuity\b|^\s*savings\b|^\s*discount\b/i;
+const catName = c => String(c || "unknown").replace(/_/g, " ");
+
+/* One card at the counter, four people eating. The tenant says who had what;
+   the arithmetic happens on the server, from the agreement. */
+function itemsPanel(expense) {
+  const items = (expense.line_items || []).filter(
+    li => li.amount != null && !SUMMARY.test(li.description || ""));
+  if (!items.length) return null;
+
+  const picked = expense.assignments || {};
+  const box = el("div", "items");
+  box.append(el("div", "ih", "WHO HAD WHAT?"));
+  const chosen = new Map();        // description -> Set of tenants
+
+  items.forEach(li => {
+    const was = picked[li.description];
+    const start = new Set(
+      was === undefined || was === HOUSE ? STATE.tenants
+      : typeof was === "string" ? [was] : was);
+    chosen.set(li.description, start);
+
+    const row = el("div", "item", `
+      <span class="d">${esc(li.description)}</span>
+      <span class="a">${money(li.amount)}</span>`);
+    const pick = el("div", "pick");
+    const buttons = [];
+
+    const paint = () => {
+      const set = chosen.get(li.description);
+      buttons.forEach(([t, b]) => b.setAttribute("aria-pressed", String(set.has(t))));
+      all.setAttribute("aria-pressed", String(set.size === STATE.tenants.length));
+      // One name is that person's; two or three is a split between them.
+      row.querySelector(".a").title = set.size > 1
+        ? `${money(li.amount / set.size)} each` : "";
+    };
+
+    const all = el("button", "all", "EVERYONE");
+    all.onclick = () => {
+      const set = chosen.get(li.description);
+      if (set.size === STATE.tenants.length) set.clear();
+      else STATE.tenants.forEach(t => set.add(t));
+      paint();
+    };
+
+    STATE.tenants.forEach(t => {
+      const b = el("button", null, esc(t));
+      b.onclick = () => {
+        const set = chosen.get(li.description);
+        set.has(t) ? set.delete(t) : set.add(t);
+        paint();
+      };
+      buttons.push([t, b]);
+      pick.append(b);
+    });
+    pick.append(all);
+    row.append(pick);
+    box.append(row);
+    paint();
+  });
+
+  const foot = el("div", "foot");
+  const save = el("button", "b go", "SAVE THE SPLIT");
+  const note = el("span", "sub",
+    "Tap a name to add them to a line. Two names splits that line between the two of them, "
+    + "and tax follows the items.");
+  save.onclick = async () => {
+    const assignments = {};
+    let blank = null;
+    chosen.forEach((set, desc) => {
+      if (!set.size) blank = desc;
+      assignments[desc] = [...set];
+    });
+    if (blank) return say(`Nobody is down for “${blank}”. Every line needs at least one name.`, "bad");
+    save.disabled = true;
+    try {
+      const r = await api(`/api/expenses/${expense.id}/assign`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assignments }),
+      });
+      say(r.needs_approval ? `Re-split. It needs a signature before it counts.`
+                           : `Re-split and posted.`);
+      await refresh();
+    } catch (err) { say(err.message, "bad"); }
+    save.disabled = false;
+  };
+  foot.append(save, note);
+  box.append(foot);
+  return box;
+}
+const catChip = c => `<span class="cat ${esc(c || "unknown")}">${esc(catName(c))}</span>`;
+
+/* ---------------- the housemates, 14x18 ---------------- */
+const BODY = [
+  "....OOOOOO....",
+  "...OHHHHHHO...",
+  "..OHHhhHHHHO..",
+  "..OHSSSSSSHO..",
+  "..OHSOSSOSHO..",
+  "..OHSSSSSSHO..",
+  "..OHSSssSSHO..",
+  "..OHHSSSSHHO..",
+  "..OHHOOOOHHO..",
+  ".OHHHSSSSHHHO.",
+  ".OHHTTTTTTHHO.",
+  "OHHHTTTTTTHHHO",
+  "OHHSTTttTTSHHO",
+  ".OHSTTTTTTSHO.",
+  "..OSOTTTTOSO..",
+  "...OPPPPPPO...",
+  "...OPPOOPPO...",
+  "...OFFOOFFO...",
+];
+const LOOKS = {
+  Christina: { H: "#6a3771", h: "#c92464", T: "#11adc1", t: "#6df7c1" },
+  Sophia:    { H: "#cb4d68", h: "#f48cb6", T: "#f7e476", t: "#ffffff" },
+  Aletta:    { H: "#9b9c82", h: "#ffffff", T: "#a1e55a", t: "#f7e476" },
+  Angelika:  { H: "#f99252", h: "#f7e476", T: "#6a3771", t: "#c92464" },
+};
+const FALLBACK = { H: "#606c81", h: "#9b9c82", T: "#11adc1", t: "#6df7c1" };
+
+function sprite(name, px = 3) {
+  const L = LOOKS[name] || FALLBACK;
+  const c = { O: "#393457", H: L.H, h: L.h, S: "#f7b69e", s: "#f48cb6",
+              T: L.T, t: L.t, P: "#6a3771", F: "#393457" };
+  let rects = "";
+  BODY.forEach((row, y) => [...row].forEach((ch, x) => {
+    if (c[ch]) rects += `<rect x="${x}" y="${y}" width="1" height="1" fill="${c[ch]}"/>`;
+  }));
+  return `<svg class="sprite" width="${14 * px}" height="${18 * px}" viewBox="0 0 14 18"
+    shape-rendering="crispEdges" role="img" aria-label="${esc(name)}">${rects}</svg>`;
+}
+
+let ME = null;
+let STATE = { sort: { key: "id", dir: -1 }, catFilter: null, tenants: [], shares: {}, expenses: [], balances: {}, settle: [], disputes: [], drafts: [], safety: null, usage: null };
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  const body = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const d = body.detail;
+    throw new Error(typeof d === "string" ? d
+      : Array.isArray(d) ? d.map(x => x.msg || JSON.stringify(x)).join("; ")
+      : r.statusText);
+  }
+  return body;
+}
+function say(msg, kind) {
+  const b = $("#banner");
+  b.textContent = msg;
+  b.className = "banner on";
+  b.style.background = kind === "bad" ? "var(--pink)" : "var(--butter)";
+  if (kind !== "bad") setTimeout(() => b.classList.remove("on"), 6500);
+}
+
+/* ---------------- signing in ---------------- */
+let gatePick = null;
+
+function drawGate() {
+  const crew = $("#gateCrew");
+  crew.innerHTML = "";
+  STATE.tenants.forEach(t => {
+    const b = el("button", null, `${sprite(t, 3)}<span>${esc(t).toUpperCase()}</span>`);
+    b.setAttribute("aria-pressed", String(t === gatePick));
+    b.onclick = () => { gatePick = t; drawGate(); $("#pw").focus(); };
+    crew.append(b);
+  });
+}
+
+async function signIn() {
+  const err = $("#gateErr");
+  if (!gatePick) { err.textContent = "Pick who you are first."; err.className = "gate-err on"; return; }
+  const btn = $("#signin");
+  btn.disabled = true;
+  try {
+    await api("/api/login", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenant: gatePick, password: $("#pw").value }),
+    });
+    ME = gatePick;
+    $("#pw").value = "";
+    err.className = "gate-err";
+    await boot();
+  } catch (e) {
+    err.textContent = e.message;
+    err.className = "gate-err on";
+  }
+  btn.disabled = false;
+}
+
+$("#signin").onclick = signIn;
+$("#pw").onkeydown = e => { if (e.key === "Enter") signIn(); };
+
+$("#logout").onclick = async () => {
+  await api("/api/logout", { method: "POST" });
+  ME = null;
+  location.reload();
+};
+
+function showGate(on) {
+  $("#gate").classList.toggle("on", on);
+  $("#meChip").style.display = on ? "none" : "";
+  $("#logout").style.display = on ? "none" : "";
+  if (!on && ME) $("#meChip").innerHTML = `${sprite(ME, 2)}<span class="n">${esc(ME).toUpperCase()}</span>`;
+}
+
+/* ---------------- tabs ---------------- */
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", String(x === t)));
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("on", p.id === "p-" + t.dataset.p));
+});
+
+/* ---------------- header + balances ---------------- */
+async function loadHealth() {
+  const h = await api("/api/health");
+  $("#model").textContent = h.model;
+  $("#ready").textContent = h.agents_ready ? "AGENTS READY" : "NO API KEY";
+  $("#dot").className = "dot" + (h.agents_ready ? "" : " off");
+  STATE.tenants = h.tenants; STATE.shares = h.shares;
+  STATE.approvalOver = h.approval_over; STATE.unanimousOver = h.unanimous_over;
+  $("#paidBy").innerHTML = h.tenants.map(t => `<option>${esc(t)}</option>`).join("");
+  $("#samples").innerHTML = `Sample documents live in <code>data/receipts/</code> (clean) and <code>data/attacks/</code> (doctored). Drag one in.`;
+  if (!h.agents_ready) say("No API key found, so no agent can run. Set PORTKEY_API_KEY (or OPENAI_API_KEY) in .env here or one level above. The ledger below still works.", "bad");
+}
+
+function drawBoard() {
+  const b = $("#board"); b.innerHTML = "";
+  STATE.tenants.forEach(t => {
+    const v = STATE.balances[t] ?? 0;
+    const cls = v > 0.005 ? "pos" : v < -0.005 ? "neg" : "sq";
+    const tag = v > 0.005 ? "OWED" : v < -0.005 ? "OWES" : "EVEN";
+    const state = v > 0.005 ? "the house owes them" : v < -0.005 ? "owes the house" : "all square";
+    b.append(el("div", "tenant " + cls, `
+      <span class="tag">${tag}</span>
+      ${sprite(t, 3)}
+      <div class="who">
+        <div class="name">${esc(t)}</div>
+        <div class="share">${Math.round((STATE.shares[t] || 0) * 100)}% of the rent</div>
+        <div class="amt num">${money(Math.abs(v))}</div>
+        <div class="state">${state}</div>
+      </div>`));
+  });
+
+  const s = $("#settle"); s.innerHTML = "";
+  s.append(el("div", "lab", "TO SETTLE THE MONTH"));
+  const pays = el("div", "pays");
+  if (!STATE.settle.length) pays.append(el("span", "pay", "Nobody owes anybody."));
+  STATE.settle.forEach(p => {
+    const chip = el("span", "pay",
+      `<b>${esc(p.from)}</b> → <b>${esc(p.to)}</b> &nbsp;${money(p.amount)}`);
+    chip.setAttribute("aria-expanded", "false");
+    chip.onclick = () => {
+      const open = chip.getAttribute("aria-expanded") === "true";
+      pays.querySelectorAll(".pay").forEach(x => x.setAttribute("aria-expanded", "false"));
+      if (open) { $("#settleDetail").innerHTML = ""; return; }
+      chip.setAttribute("aria-expanded", "true");
+      drawWhy(p);
+    };
+    pays.append(chip);
+  });
+  s.append(pays);
+  if (STATE.settle.length) {
+    const btn = el("button", "b go-draft", "DRAFT THE MESSAGES");
+    btn.onclick = () => draftAll(btn);
+    s.append(btn);
+  }
+}
+
+/* ---------------- where a settle-up figure comes from ---------------- */
+/* The chip says Sophia pays Christina $942.06, but that is a netted number,
+   not a debt between those two people. This opens the arithmetic: every
+   posted charge Sophia owes a share of, less anything she paid for the
+   house, and the note explains why Christina is the one receiving it. */
+function drawWhy(payment) {
+  const who = payment.from;
+  const posted = STATE.expenses.filter(e => e.status === "posted");
+  const rows = [];
+  let owes = 0, paid = 0;
+
+  posted.forEach(e => {
+    const share = (e.shares || []).find(x => x.tenant === who);
+    const mine = share ? share.amount : 0;
+    const fronted = e.paid_by === who ? e.total : 0;
+    if (Math.abs(mine) < 0.005 && !fronted) return;
+    owes += mine; paid += fronted;
+    rows.push({ e, mine, fronted });
+  });
+
+  const net = round2(paid - owes);
+  const card = el("div", "card why");
+  card.append(el("div", "card-h", `<h3>Why ${esc(who)} owes ${money(payment.amount)}</h3>
+    <div class="note">Every posted charge ${esc(who)} has a share of,<br>less anything
+    ${esc(who)} paid for the house</div>`));
+
+  const t = el("table");
+  t.innerHTML = `<thead><tr><th>CHARGE</th><th>CATEGORY</th>
+    <th class="r">${esc(who).toUpperCase()}&rsquo;S SHARE</th>
+    <th class="r">PAID BY ${esc(who).toUpperCase()}</th></tr></thead>`;
+  const tb = el("tbody");
+  rows.forEach(({ e, mine, fronted }) => tb.insertAdjacentHTML("beforeend", `
+    <tr><td class="stripe" style="border-left-color:${CAT_COLOUR[e.category] || "#dcd9e6"}">
+      ${esc(e.merchant || "—")}<div class="sub">${esc(e.purchase_date || "")} · #${e.id}</div></td>
+    <td>${catChip(e.category)}</td>
+    <td class="r">${mine > 0.005 ? `<span class="owe">−${money(mine)}</span>` : "—"}</td>
+    <td class="r">${fronted ? `<span class="paid">+${money(fronted)}</span>` : "—"}</td></tr>`));
+  t.append(tb);
+
+  const foot = el("tfoot");
+  foot.innerHTML = `
+    <tr><td colspan="2">Totals</td>
+      <td class="r"><span class="owe">−${money(owes)}</span></td>
+      <td class="r"><span class="paid">+${money(paid)}</span></td></tr>
+    <tr><td colspan="3">${esc(who)} ${net < 0 ? "owes" : "is owed"}</td>
+      <td class="r"><span class="${net < 0 ? "owe" : "paid"}">${money(Math.abs(net))}</span></td></tr>
+    <tr class="note-row"><td colspan="4">${
+      Math.abs(Math.abs(net) - payment.amount) < 0.01
+        ? `That whole balance goes to ${esc(payment.to)}, who is owed the most this month.
+           Section 5 settles on the last day of the month, and the house sends the fewest
+           payments that clear it rather than one payment per charge.`
+        : `${money(payment.amount)} of that goes to ${esc(payment.to)}; the rest is settled
+           with somebody else, so the house makes as few transfers as possible.`}</td></tr>`;
+  t.append(foot);
+  card.append(t);
+  $("#settleDetail").innerHTML = "";
+  $("#settleDetail").append(card);
+}
+
+/* ---------------- ledger ---------------- */
+const flagHtml = f => `<div class="flag ${esc(f.severity)}"><span class="g">${GLYPH[f.severity] || "i"}</span><div>${esc(f.message)}</div></div>`;
+const crew = () => STATE.tenants.map(t => sprite(t, 2)).join("");
+/* "Aletta and Angelika and Christina" is not how anyone writes a list. */
+const andList = xs => xs.length < 2 ? (xs[0] || "")
+  : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1];
+const goTo = p => document.querySelector(`[data-p="${p}"]`).click();
+
+function addButton(label = "+ ADD A RECEIPT") {
+  const b = el("button", "b go", label);
+  b.onclick = () => goTo("upload");
+  return b;
+}
+
+const SORT = {
+  id:       e => e.id,
+  category: e => e.category || "",
+  split:    e => e.split_rule || "",
+  paid_by:  e => e.paid_by || "",
+  total:    e => e.total,
+  status:   e => e.status || "",
+};
+
+function sortExpenses(list) {
+  const { key, dir } = STATE.sort;
+  const get = SORT[key] || SORT.id;
+  return [...list].sort((a, b) => {
+    const x = get(a), y = get(b);
+    if (x < y) return -dir;
+    if (x > y) return dir;
+    return b.id - a.id;          // newest first inside a group
+  });
+}
+
+const COLS = [
+  ["id", "DOCUMENT", ""], ["category", "CATEGORY", ""], ["split", "SPLIT", ""],
+  ["paid_by", "PAID BY", ""], ["total", "TOTAL", "r"], ["status", "STATUS", ""],
+];
+
+function expenseRows(list) {
+  const t = el("table");
+  const head = COLS.map(([key, label, cls]) => {
+    const on = STATE.sort.key === key;
+    const dir = on ? (STATE.sort.dir === 1 ? "asc" : "desc") : "";
+    return `<th class="s ${cls} ${dir}" data-sort="${key}">${label}<span class="ar"></span></th>`;
+  }).join("");
+  t.innerHTML = `<thead><tr>${head}</tr></thead>`;
+  const tb = el("tbody");
+  sortExpenses(list).forEach(e => {
+    const warn = (e.flags || []).filter(f => f.severity !== "info").length;
+    const tr = el("tr", "row", `
+      <td class="stripe" style="border-left-color:${CAT_COLOUR[e.category] || "#dcd9e6"}">
+          <div>${esc(e.merchant || "—")} ${warn ? `<span class="pill flagd">${warn} FLAG${warn > 1 ? "S" : ""}</span>` : ""}</div>
+          <div class="sub">${esc(e.purchase_date || "no date")} · #${e.id}</div></td>
+      <td>${catChip(e.category)}</td>
+      <td class="sub">${esc((e.split_rule || "").replace(/_/g, " "))}</td>
+      <td>${esc(e.paid_by)}</td>
+      <td class="r"><b>${money(e.total)}</b></td>
+      <td><span class="pill ${esc(e.status)}">${esc(e.status).toUpperCase()}</span></td>`);
+    const det = el("tr", "detail");
+    det.style.display = "none";
+    det.innerHTML = `<td colspan="6">
+      <div class="sub">${esc(e.reasoning)}</div>
+      <div class="shares">${(e.shares || []).map(s =>
+        `<span class="sh">${sprite(s.tenant, 2)} ${esc(s.tenant)} <b>${money(s.amount)}</b></span>`).join("")}</div>
+      ${(e.flags || []).map(flagHtml).join("")}
+      ${e.approved_by ? `<div class="sub" style="margin-top:10px">Signed off by ${esc(e.approved_by)} on ${esc((e.approved_at || "").slice(0, 10))}</div>` : ""}
+      <div class="row-ctl" style="margin-top:14px">
+        <input type="text" placeholder="Why is this wrong? Name the section if you can." style="flex:1;min-width:230px" data-claim="${e.id}">
+        <button class="b" data-dispute="${e.id}">DISPUTE AS ${esc(ME || "").toUpperCase()}</button>
+      </div></td>`;
+    tr.onclick = ev => { if (ev.target.closest("input,select,button")) return; det.style.display = det.style.display === "none" ? "" : "none"; };
+    det.querySelector("[data-dispute]").onclick = () => raiseDispute(e.id, det);
+    const panel = itemsPanel(e);
+    if (panel) det.querySelector("td").insertBefore(panel, det.querySelector(".row-ctl"));
+    tb.append(tr, det);
+  });
+  t.append(tb);
+  t.querySelectorAll("th.s").forEach(th => th.onclick = () => {
+    const key = th.dataset.sort;
+    // Clicking the column you are already on flips it. A new column starts
+    // the way people expect: biggest first for money, A–Z for a name.
+    STATE.sort = STATE.sort.key === key
+      ? { key, dir: -STATE.sort.dir }
+      : { key, dir: (key === "total" || key === "id") ? -1 : 1 };
+    drawLedger();
+  });
+  return t;
+}
+
+function drawLedger() {
+  const p = $("#p-ledger"); p.innerHTML = "";
+  const c = el("div", "card");
+  // A charge the agreement never splits — a fine, a guest's costs — is one
+  // person's own money. It still appears on the ledger, but counting it as
+  // house spending would overstate what the flat costs.
+  const posted = STATE.expenses.filter(
+    e => e.status === "posted" && e.split_rule !== "not_split");
+  const h = el("div", "card-h", `<h3>Everything the house has spent</h3>
+    <div class="note">${posted.length} posted · ${money(posted.reduce((a, e) => a + e.total, 0))} of house money<br>
+    <span class="sub">Click a row for the split and the reasoning</span></div>`);
+  h.append(addButton());
+  c.append(h);
+  if (!STATE.expenses.length) {
+    const empty = el("div", "empty", `<div class="crew">${crew()}</div>
+      <div class="big">NOTHING HERE YET</div>
+      <div style="margin-bottom:16px">Add a receipt and it gets read, checked, split and posted.</div>`);
+    empty.append(addButton());
+    c.append(empty);
+  } else {
+    const used = [...new Set(STATE.expenses.map(e => e.category))];
+    const leg = el("div", "legend", `<span class="lg">CATEGORY</span>`);
+    used.forEach(cat => {
+      const chip = el("span", `cat ${cat} ${STATE.catFilter === cat ? "on" : ""}`, esc(catName(cat)));
+      chip.onclick = () => { STATE.catFilter = STATE.catFilter === cat ? null : cat; drawLedger(); };
+      leg.append(chip);
+    });
+    if (STATE.catFilter) {
+      const clear = el("button", "b", "SHOW ALL");
+      clear.style.marginLeft = "auto";
+      clear.onclick = () => { STATE.catFilter = null; drawLedger(); };
+      leg.append(clear);
+    }
+    if (!STATE.catFilter) leg.querySelectorAll(".cat").forEach(x => x.classList.add("on"));
+    c.append(leg);
+    const shown = STATE.catFilter
+      ? STATE.expenses.filter(e => e.category === STATE.catFilter) : STATE.expenses;
+    c.append(expenseRows(shown));
+  }
+  p.append(c);
+  $("#c-ledger").textContent = STATE.expenses.length;
+}
+
+/* ---------------- approvals ---------------- */
+function drawApprovals() {
+  const pending = STATE.expenses.filter(e => e.status === "pending");
+  // The badge counts what is actually waiting on you, not what is waiting
+  // on anybody — a number you cannot act on is just noise.
+  const yours = pending.filter(e => (e.signers_required || []).includes(ME)
+                                 && !(e.signatures || []).includes(ME));
+  $("#c-appr").textContent = yours.length;
+  $("#c-appr").className = "count" + (yours.length ? " alert" : "");
+  const p = $("#p-approvals"); p.innerHTML = "";
+
+  if (!pending.length) {
+    const c = el("div", "card");
+    c.append(el("div", "card-h", `<h3>Nothing needs you</h3>
+      <div class="note">Charges wait here until everyone paying towards them says yes</div>`));
+    c.append(el("div", "empty", `<div class="crew">${crew()}</div>
+      <div class="big">ALL CLEAR</div>Every charge is either signed off or under the $${STATE.approvalOver} threshold.`));
+    p.append(c);
+    return;
+  }
+
+  if (yours.length) p.append(el("div", "card",
+    `<div class="card-h"><h3>${yours.length} charge${yours.length > 1 ? "s" : ""} waiting on you</h3>
+     <div class="note">You are paying towards ${yours.length > 1 ? "these" : "this"},
+     so section 6 asks you to agree to ${yours.length > 1 ? "them" : "it"}</div></div>`));
+
+  [...yours, ...pending.filter(e => !yours.includes(e))].forEach(e => {
+    const c = el("div", "card");
+    c.append(el("div", "card-h", `<h3>${esc(e.merchant || "Untitled")} — ${money(e.total)}</h3>
+      <div class="note">#${e.id} · paid by ${esc(e.paid_by)} ${catChip(e.category)}</div>`));
+    const b = el("div", "card-b");
+    b.append(el("div", "sub", esc(e.reasoning)));
+    b.append(el("div", "shares", (e.shares || []).map(s =>
+      `<span class="sh">${sprite(s.tenant, 2)} ${esc(s.tenant)} <b>${money(s.amount)}</b></span>`).join("")));
+    (e.flags || []).forEach(f => b.insertAdjacentHTML("beforeend", flagHtml(f)));
+    const ip = itemsPanel(e);
+    if (ip) b.append(ip);
+
+    const signed = e.signatures || [];
+    const need = e.signers_required || [];
+    const waiting = need.filter(t => !signed.includes(t));
+    b.insertAdjacentHTML("beforeend", `<div class="sigbar">${
+      need.map(t => `<span class="sigdot${signed.includes(t) ? " on" : ""}"
+        title="${esc(t)}"></span>`).join("")}
+      <span class="sub">${
+        !need.length ? "Nobody else is paying towards this, so nobody else signs it."
+        : waiting.length ? `${signed.length} of ${need.length} — waiting on ${andList(waiting.map(esc))}`
+        : "All signed."}</span></div>`);
+
+    const ctl = el("div", "row-ctl");
+    ctl.style.marginTop = "16px";
+    const mine = e.paid_by === ME;
+    const already = signed.includes(ME);
+    const canSign = need.includes(ME) && !already;
+    const ok = el("button", "b go", already ? "YOU SIGNED THIS"
+      : canSign ? `SIGN IT OFF AS ${esc(ME || "").toUpperCase()}` : "NOT YOURS TO SIGN");
+    const no = el("button", "b no", "REJECT");
+    ok.disabled = !canSign;
+    ok.onclick = () => decide(e.id, "approve", ok);
+    no.onclick = () => decide(e.id, "reject", no);
+    ctl.append(ok, no);
+    if (mine) ctl.append(el("span", "sub",
+      "You paid for this. Paying is your own yes — section 6 asks the others."));
+    else if (!need.includes(ME)) ctl.append(el("span", "sub",
+      "You are not paying towards this one, so it is not yours to sign."));
+    b.append(ctl);
+    c.append(b);
+    p.append(c);
+  });
+}
+
+async function decide(id, what, btn) {
+  btn.disabled = true;
+  try {
+    const r = await api(`/api/expenses/${id}/${what}`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason: "" }),
+    });
+    say(what === "reject" ? `Expense #${id} rejected by ${ME}.`
+      : r.status === "posted" ? `Expense #${id} signed off and posted.`
+      : r.message);
+    await refresh();
+  } catch (err) { say(err.message, "bad"); btn.disabled = false; }
+}
+
+/* ---------------- disputes ---------------- */
+async function raiseDispute(id, det) {
+  const claim = det.querySelector(`[data-claim="${id}"]`).value.trim();
+  if (claim.length < 3) return say("Say what is wrong with it first.", "bad");
+  const btn = det.querySelector("[data-dispute]");
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
+  try {
+    await api(`/api/expenses/${id}/dispute`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ claim }),
+    });
+    say("House counsel has ruled. See the Disputes tab.");
+    await refresh();
+    document.querySelector('[data-p="disputes"]').click();
+  } catch (err) { say(err.message, "bad"); }
+  btn.disabled = false; btn.textContent = `DISPUTE AS ${(ME || "").toUpperCase()}`;
+}
+
+function drawDisputes() {
+  $("#c-disp").textContent = STATE.disputes.length;
+  const p = $("#p-disputes"); p.innerHTML = "";
+  const c = el("div", "card");
+  c.append(el("div", "card-h", `<h3>Disputes</h3>
+    <div class="note">Ruled by house counsel, against the signed agreement</div>`));
+  if (!STATE.disputes.length) {
+    c.append(el("div", "empty", `<div class="crew">${crew()}</div>
+      <div class="big">NO ARGUMENTS YET</div>Open any expense on the ledger and contest it.`));
+  } else {
+    const b = el("div", "card-b");
+    STATE.disputes.forEach(d => {
+      const bg = d.ruling === "upheld" ? "var(--mint)" : d.ruling === "rejected" ? "var(--pink)" : "var(--peach)";
+      b.insertAdjacentHTML("beforeend", `
+        <div class="draft" style="background:${bg}">
+          <div class="row-ctl">${sprite(d.raised_by, 2)}
+            <div class="to">${esc(d.raised_by)} disputes #${d.expense_id}</div></div>
+          <div class="sub" style="margin-top:8px;color:var(--night)">${esc(d.merchant)} · ${money(d.total)} — “${esc(d.claim)}”</div>
+          <div style="margin-top:12px"><span class="pill">${esc(d.ruling || "pending").toUpperCase()}</span>
+            ${d.clause ? `<span class="pill" style="margin-left:6px">${esc(d.clause)}</span>` : ""}</div>
+          <div class="body">${esc(d.explanation || "")}</div>
+        </div>`);
+    });
+    c.append(b);
+  }
+  p.append(c);
+}
+
+/* ---------------- drafts ---------------- */
+async function draftAll(btn) {
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
+  try {
+    const who = [...new Set(STATE.settle.map(p => p.from))];
+    for (const t of who) await api(`/api/drafts/settle-up/${encodeURIComponent(t)}`, { method: "POST" });
+    say(`${who.length} message${who.length > 1 ? "s" : ""} drafted. Nothing was sent — they are on the board.`);
+    await refresh();
+    document.querySelector('[data-p="drafts"]').click();
+  } catch (err) { say(err.message, "bad"); }
+  btn.disabled = false; btn.textContent = "DRAFT THE MESSAGES";
+}
+
+function drawDrafts() {
+  $("#c-draft").textContent = STATE.drafts.length;
+  const p = $("#p-drafts"); p.innerHTML = "";
+  const c = el("div", "card");
+  c.append(el("div", "card-h", `<h3>Message board</h3>
+    <div class="note">Written, not sent. Section 12: the ledger never sends anything by itself.</div>`));
+  if (!STATE.drafts.length) {
+    c.append(el("div", "empty", `<div class="crew">${crew()}</div>
+      <div class="big">THE BOARD IS EMPTY</div>Hit “Draft the messages” once somebody owes somebody.`));
+  } else {
+    const b = el("div", "card-b");
+    STATE.drafts.forEach(d => b.insertAdjacentHTML("beforeend", `
+      <div class="draft">
+        <div class="row-ctl">${sprite(d.recipient, 2)}
+          <div class="to">TO ${esc(d.recipient).toUpperCase()}</div>
+          <span class="stamp" style="margin-left:auto">ON THE BOARD · NOT SENT</span></div>
+        <div class="sub" style="margin-top:8px">${esc(d.subject)}</div>
+        <div class="body">${esc(d.body)}</div>
+      </div>`));
+    c.append(b);
+  }
+  p.append(c);
+}
+
+/* ---------------- safety ---------------- */
+function drawSafety() {
+  const s = STATE.safety || { blocked_tool_calls: [], hidden_text_removed: [], flagged_expenses: [] };
+  const n = s.blocked_tool_calls.length + s.hidden_text_removed.length + s.flagged_expenses.length;
+  $("#c-safe").textContent = n;
+  $("#c-safe").className = "count" + (n ? " alert" : "");
+  const p = $("#p-safety"); p.innerHTML = "";
+
+  p.append(el("div", "kpis", `
+    <div class="kpi"><div class="k">TOOL CALLS<br>REFUSED</div><div class="v">${s.blocked_tool_calls.length}</div>
+      <div class="n">send, pay, delete — never reachable</div></div>
+    <div class="kpi"><div class="k">HIDDEN TEXT<br>REMOVED</div><div class="v">${s.hidden_text_removed.length}</div>
+      <div class="n">text a person could not see</div></div>
+    <div class="kpi"><div class="k">DOCUMENTS<br>FLAGGED</div><div class="v">${s.flagged_expenses.length}</div>
+      <div class="n">bad arithmetic, or an instruction</div></div>
+    <div class="kpi hl"><div class="k">PAYMENTS<br>MADE</div><div class="v">0</div>
+      <div class="n">this app cannot move money at all</div></div>`));
+
+  const c = el("div", "card");
+  c.style.marginTop = "18px";
+  c.append(el("div", "card-h", `<h3>What was stopped</h3>
+    <div class="note">Blocked in code, not by asking the model nicely</div>`));
+  const b = el("div", "card-b");
+  if (!n) b.insertAdjacentHTML("beforeend",
+    `<div class="flag good"><span class="g">+</span><div>Nothing has tried anything yet. Upload a doctored receipt from <code>data/attacks/</code> to watch this fill up.</div></div>`);
+  s.blocked_tool_calls.forEach(x => b.insertAdjacentHTML("beforeend",
+    `<div class="flag block"><span class="g">X</span><div><b>${esc(x.tool)}</b> refused — ${esc(x.reason || "gated tool")}
+     <div class="sub">${esc(JSON.stringify(x.arguments || {}))}</div></div></div>`));
+  s.hidden_text_removed.forEach(x => b.insertAdjacentHTML("beforeend",
+    `<div class="flag warn"><span class="g">!</span><div><b>${esc(x.technique)}</b> — removed before the model saw it
+     <div class="sub">“${esc((x.text || "").slice(0, 180))}”</div></div></div>`));
+  s.flagged_expenses.forEach(x => (x.flags || []).filter(f => f.severity !== "info").forEach(f =>
+    b.insertAdjacentHTML("beforeend",
+      `<div class="flag ${esc(f.severity)}"><span class="g">${GLYPH[f.severity]}</span>
+       <div><b>#${x.id} ${esc(x.merchant)}</b> — ${esc(f.message)}</div></div>`)));
+  c.append(b);
+  p.append(c);
+}
+
+/* ---------------- cost ---------------- */
+function drawCost() {
+  const u = STATE.usage || { runs: 0, total_usd: 0, tokens: {}, by_agent: {}, recent: [] };
+  $("#cost").textContent = "$" + u.total_usd.toFixed(4);
+  const p = $("#p-cost"); p.innerHTML = "";
+  const tk = u.tokens || {};
+  const perRun = u.runs ? u.total_usd / u.runs : 0;
+  p.append(el("div", "kpis", `
+    <div class="kpi"><div class="k">AGENT<br>RUNS</div><div class="v">${u.runs}</div><div class="n">since the last reset</div></div>
+    <div class="kpi"><div class="k">TOTAL<br>SPENT</div><div class="v">$${u.total_usd.toFixed(4)}</div><div class="n">at the published rates</div></div>
+    <div class="kpi hl"><div class="k">PER<br>DOCUMENT</div><div class="v">$${perRun.toFixed(5)}</div><div class="n">average across every run</div></div>
+    <div class="kpi"><div class="k">CACHED<br>INPUT</div><div class="v">${(tk.cache_read || 0).toLocaleString()}</div>
+      <div class="n">of ${(tk.input || 0).toLocaleString()} input tokens, at a tenth the price</div></div>`));
+
+  const c = el("div", "card");
+  c.style.marginTop = "18px";
+  c.append(el("div", "card-h", `<h3>Where the money goes</h3>
+    <div class="note">Only house counsel carries the full agreement,<br>and only when somebody argues</div>`));
+  const t = el("table");
+  t.innerHTML = `<thead><tr><th>AGENT</th><th class="r">RUNS</th><th class="r">SPENT</th><th class="r">PER RUN</th></tr></thead>`;
+  const tb = el("tbody");
+  Object.entries(u.by_agent).sort((a, b2) => b2[1].usd - a[1].usd).forEach(([k, v]) =>
+    tb.insertAdjacentHTML("beforeend",
+      `<tr><td>${esc(k)}</td><td class="r">${v.runs}</td><td class="r">$${v.usd.toFixed(5)}</td>
+       <td class="r">$${(v.usd / (v.runs || 1)).toFixed(5)}</td></tr>`));
+  if (!Object.keys(u.by_agent).length) tb.innerHTML = `<tr><td colspan="4" class="sub">No agent has run since the last reset.</td></tr>`;
+  t.append(tb);
+  c.append(t);
+  p.append(c);
+}
+
+/* ---------------- ask the house ---------------- */
+const STARTERS = [
+  "Why do I owe this much?",
+  "What is still waiting on a signature?",
+  "Why did the parking ticket not get split?",
+  "What does the agreement say about groceries?",
+  "Send everyone a reminder to pay me",
+];
+
+function turnHtml(role, text, data) {
+  const mine = role === "tenant";
+  const av = mine ? sprite(ME, 2) : `<div class="mark">821</div>`;
+  let extra = "";
+  const d = data || {};
+
+  (d.cards || []).forEach(c => {
+    extra += `<div class="mini"><div class="top"><b>${esc(c.merchant || "—")}</b>
+      <span>${money(c.total)}</span>
+      <span class="pill ${esc(c.status)}">${esc(c.status).toUpperCase()}</span>
+      ${catChip(c.category)}
+      <span class="sub">#${c.id} · paid by ${esc(c.paid_by)}</span></div>
+      <div class="sub" style="margin-top:6px">${esc(c.reasoning || "")}</div>
+      <div class="shares">${(c.shares||[]).map(x =>
+        `<span class="sh">${sprite(x.tenant,2)} ${esc(x.tenant)} <b>${money(x.amount)}</b></span>`).join("")}</div>
+    </div>`;
+  });
+
+  if (d.balances) extra += `<div class="mini"><div class="shares" style="margin-top:0">${
+    Object.entries(d.balances).map(([t, v]) =>
+      `<span class="sh">${sprite(t,2)} ${esc(t)} <b style="color:${v<0?"var(--berry)":"var(--teal)"}">${money(v)}</b></span>`).join("")
+  }</div></div>`;
+
+  if (d.settle_up && d.settle_up.length) extra += `<div class="mini"><div class="shares" style="margin-top:0">${
+    d.settle_up.map(x => `<span class="sh"><b>${esc(x.from)}</b> → <b>${esc(x.to)}</b> ${money(x.amount)}</span>`).join("")
+  }</div></div>`;
+
+  if (d.clause) extra += `<div style="margin-top:10px"><span class="pill">${esc(d.clause)}</span></div>`;
+
+  if (d.blocked_tools && d.blocked_tools.length) extra += `<div class="flag block">
+    <span class="g">X</span><div>It reached for <b>${d.blocked_tools.map(esc).join(", ")}</b>.
+    Refused in code and written to <code>blocked_actions.json</code> — nothing happened.</div></div>`;
+
+  if (d.refused) extra += `<div class="flag warn"><span class="g">!</span><div>
+    <b>Not something this house does:</b> ${esc(d.refused)}. The ledger reads and drafts;
+    sending, paying, approving and deleting all stay with the four of you.</div></div>`;
+
+  return `<div class="turn ${mine ? "mine" : "theirs"}">
+    <div class="av">${av}</div>
+    <div><div class="bubble">${esc(text)}</div>${extra}</div></div>`;
+}
+
+function drawStarters() {
+  $("#starters").innerHTML = "";
+  STARTERS.forEach(q => {
+    const b = el("span", "starter", esc(q));
+    b.onclick = () => { $("#askInput").value = q; askNow(); };
+    $("#starters").append(b);
+  });
+}
+
+async function loadChat() {
+  const rows = await api("/api/chat");
+  const log = $("#chatLog");
+  if (!rows.length) {
+    log.innerHTML = `<div class="empty"><div class="crew">${crew()}</div>
+      <div class="big">ASK THE HOUSE ANYTHING</div>
+      It reads the ledger and the signed agreement before it answers, and every figure
+      on a card comes out of the database rather than out of the model.</div>`;
+  } else {
+    log.innerHTML = rows.map(r => turnHtml(r.role, r.text, r.data)).join("");
+  }
+  log.scrollTop = log.scrollHeight;
+}
+
+async function askNow() {
+  const input = $("#askInput");
+  const q = input.value.trim();
+  if (q.length < 2) return;
+  const log = $("#chatLog");
+  if (log.querySelector(".empty")) log.innerHTML = "";
+  log.insertAdjacentHTML("beforeend", turnHtml("tenant", q, null));
+  log.insertAdjacentHTML("beforeend",
+    `<div class="turn theirs" id="thinking"><div class="av"><div class="mark">821</div></div>
+     <div class="bubble"><span class="spin"></span> looking it up…</div></div>`);
+  log.scrollTop = log.scrollHeight;
+  input.value = "";
+  $("#askBtn").disabled = true;
+
+  try {
+    const r = await api("/api/ask", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: q }),
+    });
+    $("#thinking").remove();
+    log.insertAdjacentHTML("beforeend", turnHtml("house", r.reply, r));
+    await refresh();
+  } catch (err) {
+    $("#thinking")?.remove();
+    log.insertAdjacentHTML("beforeend",
+      `<div class="flag block"><span class="g">X</span><div>${esc(err.message)}</div></div>`);
+  }
+  $("#askBtn").disabled = false;
+  log.scrollTop = log.scrollHeight;
+}
+
+$("#askBtn").onclick = askNow;
+$("#askInput").onkeydown = e => { if (e.key === "Enter") askNow(); };
+$("#clearChat").onclick = async () => { await api("/api/chat", { method: "DELETE" }); loadChat(); };
+
+/* ---------------- upload ---------------- */
+const drop = $("#drop"), fileInput = $("#file");
+drop.onclick = () => fileInput.click();
+drop.ondragover = e => { e.preventDefault(); drop.classList.add("over"); };
+drop.ondragleave = () => drop.classList.remove("over");
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove("over"); if (e.dataTransfer.files[0]) send(e.dataTransfer.files[0]); };
+fileInput.onchange = () => { if (fileInput.files[0]) send(fileInput.files[0]); };
+
+async function send(file) {
+  const out = $("#uploadOut");
+  out.innerHTML = `<div class="flag info"><span class="g"><span class="spin"></span></span>
+    <div>Reading <b>${esc(file.name)}</b> — cleaning it, looking at it, checking the arithmetic…</div></div>`;
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("paid_by", $("#paidBy").value);
+  if ($("#cat").value) fd.append("category", $("#cat").value);
+  try {
+    const r = await api("/api/upload", { method: "POST", body: fd });
+    out.innerHTML = renderUpload(r, file.name);
+    await refresh();
+  } catch (err) {
+    out.innerHTML = `<div class="flag block"><span class="g">X</span><div>${esc(err.message)}</div></div>`;
+  }
+  fileInput.value = "";
+}
+
+function renderUpload(r, name) {
+  const rd = r.reading || {};
+  const items = (rd.line_items || []).map(li =>
+    `<tr><td>${esc(li.description || "")}</td><td class="r">${li.amount == null ? "—" : money(li.amount)}</td></tr>`).join("");
+  const head = r.posted
+    ? `<div class="flag ${r.expense.needs_approval ? "warn" : "good"}"><span class="g">${r.expense.needs_approval ? "!" : "+"}</span>
+       <div>Read and split as ${catChip(r.expense.category)} ${esc(r.expense.split_rule.replace(/_/g, " "))}.
+       ${r.expense.needs_approval ? "It is <b>waiting on a person</b> before it counts." : "Posted straight to the ledger."}</div></div>`
+    : `<div class="flag block"><span class="g">X</span><div>${esc(r.message)} Nothing was posted.</div></div>`;
+  return `<div style="margin-top:18px">
+    ${head}
+    <div class="card" style="margin-top:16px">
+      <div class="card-h"><h3>${esc(rd.merchant || name)}</h3>
+        <div class="note">${esc(rd.purchase_date || "no date on the paper")}<br>
+        $${(r.cost_usd || 0).toFixed(5)} · ${(r.tokens?.input || 0).toLocaleString()} in / ${(r.tokens?.output || 0).toLocaleString()} out</div></div>
+      <table><thead><tr><th>WHAT THE PAPER SAYS</th><th class="r">AMOUNT</th></tr></thead>
+        <tbody>${items || `<tr><td class="sub">No line items on the document.</td><td></td></tr>`}
+        <tr><td><b>TOTAL</b></td><td class="r"><b>${money(rd.total)}</b></td></tr></tbody></table>
+      ${r.posted ? `<div class="card-b" style="border-top:3px solid var(--night)">
+        <div class="sub">${esc(r.expense.reasoning)}</div>
+        <div class="shares">${(r.expense.shares || []).map(s => `<span class="sh">${sprite(s.tenant, 2)} ${esc(s.tenant)} <b>${money(s.amount)}</b></span>`).join("")}</div>
+      </div>` : ""}
+      ${(r.flags || []).length || (r.removals || []).length ? `<div class="card-b" style="border-top:3px solid var(--night);padding-top:6px">
+        ${(r.removals || []).map(x => `<div class="flag warn"><span class="g">!</span><div>Hidden text removed (<b>${esc(x.technique)}</b>): “${esc((x.text || "").slice(0, 160))}”</div></div>`).join("")}
+        ${(r.flags || []).map(flagHtml).join("")}
+      </div>` : ""}
+    </div></div>`;
+}
+
+/* ---------------- reset ---------------- */
+$("#reset").onclick = async () => {
+  if (!confirm(
+    "Put the demo back to the month it ships with?\n\n"
+    + "This clears the ledger, disputes, drafted messages, chat history and the "
+    + "token logs, then seeds October again. Everyone is signed out.")) return;
+  const r = await api("/api/reset", { method: "POST" });
+  location.reload();
+};
+
+/* ---------------- the agreement, rendered ---------------- */
+/* A small Markdown renderer rather than a library: the only document this
+   has to handle is the one in data/, it must work with no network, and a
+   signed agreement deserves to look like a document instead of a text file. */
+function inline(t) {
+  return esc(t)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`(.+?)`/g, "<code>$1</code>")
+    .replace(/(?<![*\w])\*([^*]+)\*(?!\*)/g, "<em>$1</em>");
+}
+
+function renderAgreement(md) {
+  const lines = md.split("\n");
+  const out = [];
+  const toc = [];
+  let para = [], list = [], table = [];
+
+  const flushPara = () => { if (para.length) { out.push(`<p>${inline(para.join(" "))}</p>`); para = []; } };
+  const flushList = () => { if (list.length) { out.push(`<ul>${list.map(x => `<li>${inline(x)}</li>`).join("")}</ul>`); list = []; } };
+  const flushTable = () => {
+    if (!table.length) return;
+    const rows = table.map(r => r.replace(/^\||\|$/g, "").split("|").map(c => c.trim()));
+    const head = rows[0];
+    const body = rows.slice(1).filter(r => !/^-{2,}$/.test(r[0].replace(/[\s:]/g, "")));
+    out.push(`<table><thead><tr>${head.map(h => `<th>${inline(h)}</th>`).join("")}</tr></thead>`
+      + `<tbody>${body.map(r => `<tr>${r.map(c => `<td>${inline(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>`);
+    table = [];
+  };
+  const flushAll = () => { flushPara(); flushList(); flushTable(); };
+
+  lines.forEach(raw => {
+    const line = raw.replace(/\s+$/, "");
+    if (/^\|/.test(line)) { flushPara(); flushList(); table.push(line); return; }
+    flushTable();
+
+    if (!line.trim()) { flushPara(); flushList(); return; }
+    if (/^#\s+/.test(line)) {
+      flushAll();
+      out.push(`<h1>${inline(line.replace(/^#\s+/, ""))}</h1>`);
+      return;
+    }
+    if (/^##\s+/.test(line)) {
+      flushAll();
+      const text = line.replace(/^##\s+/, "");
+      const m = text.match(/^(\d+)\.\s*(.*)$/);
+      const id = "s" + (m ? m[1] : toc.length + 1);
+      toc.push({ id, n: m ? m[1] : "", t: m ? m[2] : text });
+      out.push(`<h2 id="${id}">${m ? `<span class="n">${m[1]}</span>` : ""}<span>${inline(m ? m[2] : text)}</span></h2>`);
+      return;
+    }
+    if (/^---+$/.test(line.trim())) { flushAll(); out.push("<hr>"); return; }
+    if (/^[-*]\s+/.test(line)) { flushPara(); list.push(line.replace(/^[-*]\s+/, "")); return; }
+    para.push(line.trim());
+  });
+  flushAll();
+
+  // The staples list is one long comma run; set it in columns so it scans.
+  let html = out.join("\n").replace(
+    /<p>(milk, eggs[\s\S]*?bleach\.)<\/p>/,
+    (_, body) => `<div class="staples">${body}</div>`);
+
+  // The first paragraph is the signature line, not body copy.
+  html = html.replace(/<p>(Signed by[\s\S]*?)<\/p>/, '<div class="signed">$1</div>');
+
+  $("#agreementText").innerHTML = html;
+  $("#toc").innerHTML = `<div class="h">CONTENTS</div>` + toc.map(x =>
+    `<a href="#${x.id}" data-sec="${x.id}"><span class="n">${x.n}</span>${esc(x.t)}</a>`).join("");
+  $("#toc").querySelectorAll("a").forEach(a => a.onclick = ev => {
+    ev.preventDefault();
+    document.getElementById(a.dataset.sec).scrollIntoView({ block: "start" });
+  });
+}
+
+/* ---------------- refresh ---------------- */
+async function refresh() {
+  const [bal, exp, dis, dr, sf, us] = await Promise.all([
+    api("/api/balances"), api("/api/expenses"), api("/api/disputes"),
+    api("/api/drafts"), api("/api/security"), api("/api/usage"),
+  ]);
+  STATE.balances = bal.balances; STATE.settle = bal.settle_up;
+  STATE.expenses = exp; STATE.disputes = dis; STATE.drafts = dr;
+  STATE.safety = sf; STATE.usage = us;
+  $("#settleDetail").innerHTML = "";
+  drawBoard(); drawLedger(); drawApprovals(); drawDisputes(); drawDrafts(); drawSafety(); drawCost();
+}
+
+async function boot() {
+  showGate(false);
+  await refresh();
+  await loadChat();
+  drawStarters();
+  api("/api/agreement").then(a => renderAgreement(a.markdown));
+}
+
+(async () => {
+  await loadHealth();
+  drawGate();
+  const me = await api("/api/me");
+  if (me.signed_in) { ME = me.tenant; await boot(); }
+  else { showGate(true); }
+})();
+</script>
+</body>
+</html>
