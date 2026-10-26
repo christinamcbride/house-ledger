@@ -10,14 +10,14 @@
     {
       "agent": "reader",
       "runs_per_month": 20,
-      "usd_per_run": 0.000161,
-      "usd_per_month": 0.003227
+      "usd_per_run": 0.000166,
+      "usd_per_month": 0.003326
     },
     {
       "agent": "concierge",
       "runs_per_month": 15,
-      "usd_per_run": 0.000269,
-      "usd_per_month": 0.004042
+      "usd_per_run": 0.000374,
+      "usd_per_month": 0.005604
     },
     {
       "agent": "messenger",
@@ -32,9 +32,9 @@
       "usd_per_month": 0.001614
     }
   ],
-  "household_per_month_usd": 0.010843,
-  "per_person_per_month_usd": 0.002711,
-  "at_100_users_per_month_usd": 0.2711,
-  "at_10000_users_per_month_usd": 27.11,
-  "at_10000_users_per_year_usd": 325.3
+  "household_per_month_usd": 0.012504,
+  "per_person_per_month_usd": 0.003126,
+  "at_100_users_per_month_usd": 0.3126,
+  "at_10000_users_per_month_usd": 31.26,
+  "at_10000_users_per_year_usd": 375.11
 }

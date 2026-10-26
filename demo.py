@@ -1,4 +1,4 @@
-"""One ordinary month at 821 State Street, for anyone opening this cold.
+"""One ordinary month at 888 State Street, for anyone opening this cold.
 
 No agent runs here and nothing is invented: every expense goes through
 `houserules.split_expense`, the same function the app calls once a document

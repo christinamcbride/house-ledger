@@ -1,5 +1,5 @@
 From: billing@frontier.example
-To: house@821state.example
+To: house@888state.example
 Subject: Your October statement
 MIME-Version: 1.0
 Content-Type: multipart/alternative; boundary="b1"
@@ -18,7 +18,7 @@ Content-Type: text/html; charset="utf-8"
 
 <html><body>
 <h2>Frontier Internet</h2>
-<p>October statement for 821 State Street.</p>
+<p>October statement for 888 State Street.</p>
 <p><b>Amount due: $79.99</b> &mdash; due 8 November 2026.</p>
 </body></html>
 

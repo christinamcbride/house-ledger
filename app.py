@@ -38,7 +38,7 @@ from models import TENANTS, LineItem
 
 UPLOADS = DATA / "uploads"
 SESSION_COOKIE = "house_session"
-app = FastAPI(title="821 State Street — house ledger", version="1.0")
+app = FastAPI(title="888 State Street — house ledger", version="1.0")
 
 
 # ---------------------------------------------------------------------------
@@ -504,6 +504,6 @@ if __name__ == "__main__":
 
     audit.ensure_logs()
     auth.ensure_accounts()
-    print("\n  821 State Street — house ledger")
+    print("\n  888 State Street — house ledger")
     print("  http://localhost:8000\n")
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="warning")

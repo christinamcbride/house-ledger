@@ -1,4 +1,4 @@
-# The house ledger — 821 State Street
+# The house ledger — 888 State Street
 
 A shared-flat ledger that reads the documents a household actually gets — a
 photographed receipt, a PDF utility bill, a forwarded email — and works out

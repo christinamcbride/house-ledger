@@ -215,7 +215,7 @@ HTML = f"""<!doctype html>
 
 <h2>1. Motivation</h2>
 
-<p>Four people share a flat at 821 State Street. Rent is $3,600 a month,
+<p>Four people share a flat at 888 State Street. Rent is $3,600 a month,
 utilities are a few hundred more, and on top of that are the groceries,
 the bin bags, the IKEA trip and the takeaway somebody ordered at eleven at
 night. One person taps a card; three more owe a share. Nobody writes it
@@ -575,7 +575,7 @@ dropped, so the ledger balances to the cent.</p>
 
 <h2>6. Impact</h2>
 
-<p>Angelika Sarmiento, one of my housemates, used the app and was asked
+<p>Angelika, one of my housemates, used the app and was asked
 what she made of it. Unprompted, and without being told what the project
 was arguing:</p>
 

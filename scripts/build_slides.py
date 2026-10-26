@@ -231,7 +231,7 @@ HTML = f"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The house ledger — 821 State Street</title>
+<title>The house ledger — 888 State Street</title>
 <link rel="stylesheet" href="{REVEAL}/dist/reveal.css">
 <style>
 {font_face("Determination", "determination.ttf")}
@@ -352,7 +352,7 @@ table.t tr:last-child td{{border-bottom:none;font-weight:700}}
       <p class="lede">Four roommates, one lease, and an&nbsp;agreement<br>
       that finally does something.</p>
       <p style="margin-top:30px;font-size:24px;color:#cfcbe4">
-        Christina McBride &middot; 821 State Street, New Haven</p>
+        Christina McBride &middot; 888 State Street, New Haven</p>
       <div style="margin-top:24px">
         <span class="tag">gpt-6-luna</span>
         <span class="tag">pydantic-ai</span>
@@ -539,7 +539,7 @@ table.t tr:last-child td{{border-bottom:none;font-weight:700}}
       feel much <strong style="color:var(--teal)">less awkward</strong>.
       The design is fun, but the app is still genuinely practical."</p>
       <p style="font-size:17px;color:var(--slate);margin:16px 0 0">
-      &mdash; Angelika Sarmiento, housemate and one of the four on the ledger</p>
+      &mdash; Angelika, housemate and one of the four on the ledger</p>
     </div>
     <div>
       <div class="stat go" style="margin-bottom:14px">

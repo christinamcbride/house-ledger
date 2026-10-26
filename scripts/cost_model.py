@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import audit  # noqa: E402
 from config import OUTPUT, USAGE_LOG  # noqa: E402
 
-#: A month at 821 State Street, from the shape of the demo data. Four people
+#: A month at 888 State Street, from the shape of the demo data. Four people
 #: sharing a flat put up somewhere around five documents a week between them,
 #: argue about one charge, and settle once.
 MONTHLY = {

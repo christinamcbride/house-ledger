@@ -1402,5 +1402,590 @@
       }
     },
     "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:09+00:00",
+    "run_id": "2eda9300305e",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a01_display_none.html",
+    "model": "gpt-6-luna",
+    "duration_ms": 1696,
+    "tokens": {
+      "input": 1530,
+      "cache_read": 1281,
+      "cache_write": 123,
+      "output": 113
+    },
+    "requests": 1,
+    "cost_usd": 0.000109585,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 249,
+        "rate_per_1m": 0.1,
+        "usd": 2.49e-05
+      },
+      "input_cached": {
+        "tokens": 1281,
+        "rate_per_1m": 0.01,
+        "usd": 1.281e-05
+      },
+      "cache_write": {
+        "tokens": 123,
+        "rate_per_1m": 0.125,
+        "usd": 1.5375e-05
+      },
+      "output": {
+        "tokens": 113,
+        "rate_per_1m": 0.5,
+        "usd": 5.65e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:09+00:00",
+    "run_id": "9e2cc1afe889",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a02_zero_font.html",
+    "model": "gpt-6-luna",
+    "duration_ms": 178,
+    "tokens": {
+      "input": 1530,
+      "cache_read": 1281,
+      "cache_write": 123,
+      "output": 113
+    },
+    "requests": 1,
+    "cost_usd": 0.000109585,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 249,
+        "rate_per_1m": 0.1,
+        "usd": 2.49e-05
+      },
+      "input_cached": {
+        "tokens": 1281,
+        "rate_per_1m": 0.01,
+        "usd": 1.281e-05
+      },
+      "cache_write": {
+        "tokens": 123,
+        "rate_per_1m": 0.125,
+        "usd": 1.5375e-05
+      },
+      "output": {
+        "tokens": 113,
+        "rate_per_1m": 0.5,
+        "usd": 5.65e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:09+00:00",
+    "run_id": "bb173e3abee0",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a03_stylesheet.html",
+    "model": "gpt-6-luna",
+    "duration_ms": 145,
+    "tokens": {
+      "input": 1530,
+      "cache_read": 1281,
+      "cache_write": 123,
+      "output": 113
+    },
+    "requests": 1,
+    "cost_usd": 0.000109585,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 249,
+        "rate_per_1m": 0.1,
+        "usd": 2.49e-05
+      },
+      "input_cached": {
+        "tokens": 1281,
+        "rate_per_1m": 0.01,
+        "usd": 1.281e-05
+      },
+      "cache_write": {
+        "tokens": 123,
+        "rate_per_1m": 0.125,
+        "usd": 1.5375e-05
+      },
+      "output": {
+        "tokens": 113,
+        "rate_per_1m": 0.5,
+        "usd": 5.65e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:11+00:00",
+    "run_id": "44c83d5bc0ad",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a04_white_ink.pdf",
+    "model": "gpt-6-luna",
+    "duration_ms": 1468,
+    "tokens": {
+      "input": 1511,
+      "cache_read": 1281,
+      "cache_write": 104,
+      "output": 82
+    },
+    "requests": 1,
+    "cost_usd": 8.981e-05,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 230,
+        "rate_per_1m": 0.1,
+        "usd": 2.3e-05
+      },
+      "input_cached": {
+        "tokens": 1281,
+        "rate_per_1m": 0.01,
+        "usd": 1.281e-05
+      },
+      "cache_write": {
+        "tokens": 104,
+        "rate_per_1m": 0.125,
+        "usd": 1.3e-05
+      },
+      "output": {
+        "tokens": 82,
+        "rate_per_1m": 0.5,
+        "usd": 4.1e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:13+00:00",
+    "run_id": "dfde83bd3a48",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a05_tiny_text.pdf",
+    "model": "gpt-6-luna",
+    "duration_ms": 2604,
+    "tokens": {
+      "input": 1511,
+      "cache_read": 1385,
+      "cache_write": 0,
+      "output": 92
+    },
+    "requests": 1,
+    "cost_usd": 7.245e-05,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 126,
+        "rate_per_1m": 0.1,
+        "usd": 1.26e-05
+      },
+      "input_cached": {
+        "tokens": 1385,
+        "rate_per_1m": 0.01,
+        "usd": 1.385e-05
+      },
+      "cache_write": {
+        "tokens": 0,
+        "rate_per_1m": 0.125,
+        "usd": 0.0
+      },
+      "output": {
+        "tokens": 92,
+        "rate_per_1m": 0.5,
+        "usd": 4.6e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:13+00:00",
+    "run_id": "559ddde2fbb2",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a06_off_page.pdf",
+    "model": "gpt-6-luna",
+    "duration_ms": 153,
+    "tokens": {
+      "input": 1511,
+      "cache_read": 1281,
+      "cache_write": 104,
+      "output": 82
+    },
+    "requests": 1,
+    "cost_usd": 8.981e-05,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 230,
+        "rate_per_1m": 0.1,
+        "usd": 2.3e-05
+      },
+      "input_cached": {
+        "tokens": 1281,
+        "rate_per_1m": 0.01,
+        "usd": 1.281e-05
+      },
+      "cache_write": {
+        "tokens": 104,
+        "rate_per_1m": 0.125,
+        "usd": 1.3e-05
+      },
+      "output": {
+        "tokens": 82,
+        "rate_per_1m": 0.5,
+        "usd": 4.1e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:15+00:00",
+    "run_id": "110d69df4bcb",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a07_mime_inversion.eml",
+    "model": "gpt-6-luna",
+    "duration_ms": 1944,
+    "tokens": {
+      "input": 1493,
+      "cache_read": 1281,
+      "cache_write": 86,
+      "output": 45
+    },
+    "requests": 1,
+    "cost_usd": 6.726e-05,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 212,
+        "rate_per_1m": 0.1,
+        "usd": 2.12e-05
+      },
+      "input_cached": {
+        "tokens": 1281,
+        "rate_per_1m": 0.01,
+        "usd": 1.281e-05
+      },
+      "cache_write": {
+        "tokens": 86,
+        "rate_per_1m": 0.125,
+        "usd": 1.075e-05
+      },
+      "output": {
+        "tokens": 45,
+        "rate_per_1m": 0.5,
+        "usd": 2.25e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:15+00:00",
+    "run_id": "b94f112036af",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a08_zero_width.html",
+    "model": "gpt-6-luna",
+    "duration_ms": 138,
+    "tokens": {
+      "input": 1530,
+      "cache_read": 1281,
+      "cache_write": 123,
+      "output": 113
+    },
+    "requests": 1,
+    "cost_usd": 0.000109585,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 249,
+        "rate_per_1m": 0.1,
+        "usd": 2.49e-05
+      },
+      "input_cached": {
+        "tokens": 1281,
+        "rate_per_1m": 0.01,
+        "usd": 1.281e-05
+      },
+      "cache_write": {
+        "tokens": 123,
+        "rate_per_1m": 0.125,
+        "usd": 1.5375e-05
+      },
+      "output": {
+        "tokens": 113,
+        "rate_per_1m": 0.5,
+        "usd": 5.65e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:16+00:00",
+    "run_id": "b2dbe635355f",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a09_altered_total.png",
+    "model": "gpt-6-luna",
+    "duration_ms": 346,
+    "tokens": {
+      "input": 1941,
+      "cache_read": 0,
+      "cache_write": 0,
+      "output": 163
+    },
+    "requests": 1,
+    "cost_usd": 0.0002756,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 1941,
+        "rate_per_1m": 0.1,
+        "usd": 0.0001941
+      },
+      "input_cached": {
+        "tokens": 0,
+        "rate_per_1m": 0.01,
+        "usd": 0.0
+      },
+      "cache_write": {
+        "tokens": 0,
+        "rate_per_1m": 0.125,
+        "usd": 0.0
+      },
+      "output": {
+        "tokens": 163,
+        "rate_per_1m": 0.5,
+        "usd": 8.15e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:16+00:00",
+    "run_id": "07c473756276",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a10_handwritten_claim.png",
+    "model": "gpt-6-luna",
+    "duration_ms": 314,
+    "tokens": {
+      "input": 1941,
+      "cache_read": 0,
+      "cache_write": 0,
+      "output": 171
+    },
+    "requests": 1,
+    "cost_usd": 0.0002796,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 1941,
+        "rate_per_1m": 0.1,
+        "usd": 0.0001941
+      },
+      "input_cached": {
+        "tokens": 0,
+        "rate_per_1m": 0.01,
+        "usd": 0.0
+      },
+      "cache_write": {
+        "tokens": 0,
+        "rate_per_1m": 0.125,
+        "usd": 0.0
+      },
+      "output": {
+        "tokens": 171,
+        "rate_per_1m": 0.5,
+        "usd": 8.55e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:19+00:00",
+    "run_id": "95b7f3192a29",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/receipts/r01_stopandshop.png",
+    "model": "gpt-6-luna",
+    "duration_ms": 1567,
+    "tokens": {
+      "input": 2179,
+      "cache_read": 0,
+      "cache_write": 0,
+      "output": 136
+    },
+    "requests": 1,
+    "cost_usd": 0.0002859,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 2179,
+        "rate_per_1m": 0.1,
+        "usd": 0.0002179
+      },
+      "input_cached": {
+        "tokens": 0,
+        "rate_per_1m": 0.01,
+        "usd": 0.0
+      },
+      "cache_write": {
+        "tokens": 0,
+        "rate_per_1m": 0.125,
+        "usd": 0.0
+      },
+      "output": {
+        "tokens": 136,
+        "rate_per_1m": 0.5,
+        "usd": 6.8e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:26+00:00",
+    "run_id": "8d74d67699a1",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/receipts/r02_mcdonalds.png",
+    "model": "gpt-6-luna",
+    "duration_ms": 3989,
+    "tokens": {
+      "input": 2175,
+      "cache_read": 0,
+      "cache_write": 0,
+      "output": 83
+    },
+    "requests": 1,
+    "cost_usd": 0.000259,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 2175,
+        "rate_per_1m": 0.1,
+        "usd": 0.0002175
+      },
+      "input_cached": {
+        "tokens": 0,
+        "rate_per_1m": 0.01,
+        "usd": 0.0
+      },
+      "cache_write": {
+        "tokens": 0,
+        "rate_per_1m": 0.125,
+        "usd": 0.0
+      },
+      "output": {
+        "tokens": 83,
+        "rate_per_1m": 0.5,
+        "usd": 4.15e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:34+00:00",
+    "run_id": "d8004af1cc1f",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/receipts/r03_electric_bill.pdf",
+    "model": "gpt-6-luna",
+    "duration_ms": 3581,
+    "tokens": {
+      "input": 1511,
+      "cache_read": 1385,
+      "cache_write": 0,
+      "output": 92
+    },
+    "requests": 1,
+    "cost_usd": 7.245e-05,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 126,
+        "rate_per_1m": 0.1,
+        "usd": 1.26e-05
+      },
+      "input_cached": {
+        "tokens": 1385,
+        "rate_per_1m": 0.01,
+        "usd": 1.385e-05
+      },
+      "cache_write": {
+        "tokens": 0,
+        "rate_per_1m": 0.125,
+        "usd": 0.0
+      },
+      "output": {
+        "tokens": 92,
+        "rate_per_1m": 0.5,
+        "usd": 4.6e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:30:36+00:00",
+    "run_id": "44ae6d48b85a",
+    "agent": "reader",
+    "document": "/Users/christinamcbride/Desktop/yale mba/courses/MGT 409/Final Project/data/attacks/a09_altered_total.png",
+    "model": "gpt-6-luna",
+    "duration_ms": 398,
+    "tokens": {
+      "input": 1941,
+      "cache_read": 0,
+      "cache_write": 0,
+      "output": 163
+    },
+    "requests": 1,
+    "cost_usd": 0.0002756,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 1941,
+        "rate_per_1m": 0.1,
+        "usd": 0.0001941
+      },
+      "input_cached": {
+        "tokens": 0,
+        "rate_per_1m": 0.01,
+        "usd": 0.0
+      },
+      "cache_write": {
+        "tokens": 0,
+        "rate_per_1m": 0.125,
+        "usd": 0.0
+      },
+      "output": {
+        "tokens": 163,
+        "rate_per_1m": 0.5,
+        "usd": 8.15e-05
+      }
+    },
+    "error": null
+  },
+  {
+    "time": "2026-10-26T18:32:03+00:00",
+    "run_id": "d20def16190d",
+    "agent": "concierge",
+    "document": null,
+    "model": "gpt-6-luna",
+    "duration_ms": 3080,
+    "tokens": {
+      "input": 2788,
+      "cache_read": 0,
+      "cache_write": 2536,
+      "output": 119
+    },
+    "requests": 2,
+    "cost_usd": 0.0006553,
+    "cost_breakdown": {
+      "input_uncached": {
+        "tokens": 2788,
+        "rate_per_1m": 0.1,
+        "usd": 0.0002788
+      },
+      "input_cached": {
+        "tokens": 0,
+        "rate_per_1m": 0.01,
+        "usd": 0.0
+      },
+      "cache_write": {
+        "tokens": 2536,
+        "rate_per_1m": 0.125,
+        "usd": 0.000317
+      },
+      "output": {
+        "tokens": 119,
+        "rate_per_1m": 0.5,
+        "usd": 5.95e-05
+      }
+    },
+    "error": null
   }
 ]

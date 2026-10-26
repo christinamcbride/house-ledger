@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>821 State St — house ledger</title>
+<title>888 State St — house ledger</title>
 <style>
 /* Three pixel faces, served from the repo. Nothing is fetched from a CDN,
    so the app looks right offline and on a locked-down machine. */
@@ -394,7 +394,7 @@ footer b{color:var(--mint);font-weight:400;font-family:var(--px);font-size:14px}
 
 <div id="gate">
   <div class="gate-card">
-    <h2>821 STATE ST</h2>
+    <h2>888 STATE ST</h2>
     <div class="sub" style="margin-top:10px">Four people, one ledger. Sign in as yourself —
       an approval is only worth something if the house knows who gave it.</div>
     <div class="gate-crew" id="gateCrew"></div>
@@ -410,9 +410,9 @@ footer b{color:var(--mint);font-weight:400;font-family:var(--px);font-size:14px}
 
 <header>
   <div class="hdr">
-    <div class="mark">821</div>
+    <div class="mark">888</div>
     <div>
-      <h1>821 State St</h1>
+      <h1>888 State St</h1>
       <div class="sub">HOUSE LEDGER</div>
     </div>
     <div class="hdr-right">
@@ -1261,7 +1261,7 @@ const STARTERS = [
 
 function turnHtml(role, text, data) {
   const mine = role === "tenant";
-  const av = mine ? sprite(ME, 2) : `<div class="mark">821</div>`;
+  const av = mine ? sprite(ME, 2) : `<div class="mark">888</div>`;
   let extra = "";
   const d = data || {};
 
@@ -1332,7 +1332,7 @@ async function askNow() {
   if (log.querySelector(".empty")) log.innerHTML = "";
   log.insertAdjacentHTML("beforeend", turnHtml("tenant", q, null));
   log.insertAdjacentHTML("beforeend",
-    `<div class="turn theirs" id="thinking"><div class="av"><div class="mark">821</div></div>
+    `<div class="turn theirs" id="thinking"><div class="av"><div class="mark">888</div></div>
      <div class="bubble"><span class="spin"></span> looking it up…</div></div>`);
   log.scrollTop = log.scrollHeight;
   input.value = "";
