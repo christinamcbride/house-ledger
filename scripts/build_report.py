@@ -30,7 +30,7 @@ def load(name: str) -> dict:
         return {}
 
 
-def img(name: str, caption: str, width: str = "72%") -> str:
+def img(name: str, caption: str, width: str = "62%") -> str:
     p = SHOTS / name
     if not p.exists():
         return f'<p class="missing">[missing figure: {name}]</p>'
@@ -291,8 +291,8 @@ subset of the house.</p>
 
 <p>Honest comparison: if your household already agrees on its rules and
 nobody disputes anything, Splitwise is less work than this. The House
-Ledger is for the case where the rules are written down and are worth
-enforcing consistently &mdash; and for the case where somebody argues.</p>
+Ledger is for the case where the rules are worth enforcing consistently,
+and for the case where somebody argues.</p>
 
 <h2>3. The Agents</h2>
 
@@ -570,14 +570,14 @@ to the stated total; the rounding remainder is assigned rather than
 dropped, so the ledger balances to the cent.</p>
 
 <p>Against data leakage, <code>audit.py</code> redacts a fixed key list
-&mdash; API keys, tokens, passwords, email addresses, phone numbers,
-account numbers &mdash; at any nesting depth before anything is written to
-a log.</p>
+&mdash; keys, tokens, passwords, emails, phone numbers, account numbers
+&mdash; at any depth before anything reaches a log.</p>
 
 <h2>6. Impact</h2>
 
-<p>One of my housemates used the app and was asked what she made of it.
-Unprompted, and without being told what the project was arguing:</p>
+<p>Angelika Sarmiento, one of my housemates, used the app and was asked
+what she made of it. Unprompted, and without being told what the project
+was arguing:</p>
 
 <blockquote>"Honestly, I like that the website shows exactly why I owe
 something instead of just giving me a number. Seeing the receipt, the
@@ -585,8 +585,9 @@ split, and what still needs approval makes roommate finances feel much
 less awkward. The design is fun, but the app is still genuinely
 practical."</blockquote>
 
-<p>Three things in that are worth separating out, because they are
-different kinds of evidence.</p>
+<p>She is also one of the four tenants on the ledger, so she was reading
+her own balance rather than a demo. Three things in her answer are worth
+separating out, because they are different kinds of evidence.</p>
 
 <p>The first sentence is the project's central claim, returned by somebody
 who had not read the claim. The argument in section 2 is that every
@@ -598,11 +599,10 @@ own words. It is one person, but it is the specific thing the design was
 built around, and she named it first.</p>
 
 <p>The second sentence is about friction rather than time. Section 1
-claimed that the real cost of shared finances is social, not clerical
-&mdash; the argument about the protein powder is never about the protein
-powder. "Makes roommate finances feel much less awkward" is a direct
-report of that cost going down. It is subjective and unquantified, and it
-is also the outcome the house actually cares about.</p>
+claimed the real cost of shared finances is social, not clerical. "Makes
+roommate finances feel much less awkward" is a direct report of that cost
+going down &mdash; subjective and unquantified, and also the outcome the
+house actually cares about.</p>
 
 <p>The third is a design finding I would not have claimed on my own. A
 pixel-art interface for money is a risk: it can read as unserious, and a
@@ -615,20 +615,17 @@ easily have gone the other way.</p>
 
 <p>Alongside that, the figures. A receipt goes from photograph to posted,
 split and attributed in about 1.7 seconds of agent time at a cost of
-${reader_cost:.5f}. The seeded month &mdash; six documents &mdash; is read,
-split and reconciled to the cent, with every charge carrying the clause
-that produced it, and the settle-up reduces a month of mutual debts to
-three transfers. Reader accuracy was {ev_lean}/{ev_cases} on documents with
-known contents (Table 4).</p>
+${reader_cost:.5f}, and reader accuracy was {ev_lean}/{ev_cases} on
+documents with known contents (Table 4). The settle-up reduces a month of
+mutual debts to three transfers.</p>
 
 <p>The time saving is an estimate and should be read as one. Entering an
-expense by hand &mdash; open the app, type the merchant, type the amount,
-pick the category, pick who was involved, choose the division &mdash; runs
-to roughly 40 to 60 seconds done promptly, and considerably longer
-reconstructed later from a photograph. At twenty documents a month that is
-something like 15 to 20 minutes per household per month, replaced by
-uploading an image. That range comes from my own use, not from timing other
-people.</p>
+expense by hand &mdash; merchant, amount, category, who was involved, how
+to divide it &mdash; runs to roughly 40 to 60 seconds done promptly, and
+longer reconstructed later from a photograph. At twenty documents a month
+that is something like 15 to 20 minutes per household, replaced by
+uploading an image. That range comes from my own use, not from timing
+other people.</p>
 
 <h3>What this evidence does not show</h3>
 

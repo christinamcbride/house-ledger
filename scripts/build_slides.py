@@ -539,7 +539,7 @@ table.t tr:last-child td{{border-bottom:none;font-weight:700}}
       feel much <strong style="color:var(--teal)">less awkward</strong>.
       The design is fun, but the app is still genuinely practical."</p>
       <p style="font-size:17px;color:var(--slate);margin:16px 0 0">
-      &mdash; a housemate at 821 State Street, after using it</p>
+      &mdash; Angelika Sarmiento, housemate and one of the four on the ledger</p>
     </div>
     <div>
       <div class="stat go" style="margin-bottom:14px">
