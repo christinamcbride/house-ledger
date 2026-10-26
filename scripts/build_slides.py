@@ -59,6 +59,9 @@ def load(name: str, default: dict | None = None) -> dict:
 cache = load("cache_experiment.json")
 cost = load("cost_model.json")
 attacks = load("attack_results.json")
+evals = load("eval_results.json")
+ev_lean = evals.get("totals_correct_lean", 0)
+ev_cases = evals.get("cases", 0)
 
 uncached = cache.get("uncached", {})
 cached = cache.get("cached", {})
@@ -74,6 +77,7 @@ household = cost.get("household_per_month_usd", 0)
 
 reader_run = next((r["usd_per_run"] for r in cost.get("per_agent", [])
                    if r["agent"] == "reader"), 0)
+reader_cost = reader_run
 
 
 # ------------------------------------------------------------------ a house
@@ -525,24 +529,37 @@ table.t tr:last-child td{{border-bottom:none;font-weight:700}}
 
 <!-- 9 ------------------------------------------------------------------ -->
 <section>
-  <h2>Three layers, on purpose</h2>
-  <div class="grid g3">
-    <div class="stat"><div class="k">Code</div>
-      <div class="v word">Strip what<br>nobody can see</div>
-      <div class="n">If a person opening the document could not read it, the model
-      does not get it. No judgement about which hidden sentences are malicious.</div></div>
-    <div class="stat hi"><div class="k">Design</div>
-      <div class="v word">Nothing to<br>argue with</div>
-      <div class="n">The split comes from the agreement, in code. A poisoned
-      receipt can corrupt a fact; there is no decision for it to influence.</div></div>
-    <div class="stat go"><div class="k">Prompt</div>
-      <div class="v word">Data, not<br>instructions</div>
-      <div class="n">Every document arrives fenced and labelled untrusted. The
-      weakest layer, so it is the last one, not the only one.</div></div>
+  <h2>Impact</h2>
+  <div class="grid" style="grid-template-columns:1.25fr .85fr;gap:24px;align-items:start">
+    <div class="card">
+      <p style="font-family:var(--soft);font-size:27px;line-height:1.35;margin:0">
+      "I like that the website shows exactly <strong style="color:var(--teal)">why
+      I owe something</strong> instead of just giving me a number. Seeing the
+      receipt, the split, and what still needs approval makes roommate finances
+      feel much <strong style="color:var(--teal)">less awkward</strong>.
+      The design is fun, but the app is still genuinely practical."</p>
+      <p style="font-size:17px;color:var(--slate);margin:16px 0 0">
+      &mdash; a housemate at 821 State Street, after using it</p>
+    </div>
+    <div>
+      <div class="stat go" style="margin-bottom:14px">
+        <div class="k">She named the thesis first</div>
+        <div class="v word">Unprompted</div>
+        <div class="n">Every rival treats the split as an input, so it has no
+        reason to give. Attaching the clause is the whole bet &mdash; and it is
+        the first thing she mentioned.</div></div>
+      <div class="stat">
+        <div class="k">The risk that did not land</div>
+        <div class="v word">Fun, but trusted</div>
+        <div class="n">Pixel art for money could easily have read as a toy.
+        It did not.</div></div>
+    </div>
   </div>
-  <p style="margin-top:36px;font-size:26px">A photograph has no hidden layer to
-  strip — so for images the defence moves to <strong>arithmetic</strong>. The
-  line items have to add up to the total the paper claims.</p>
+  <p style="margin-top:22px;font-size:21px;color:#cfcbe4">
+    <strong>What it is not:</strong> one user, one household, one session.
+    Enough to show the design is wanted; not enough to claim hours saved.
+    Measured alongside it: {ev_lean}/{ev_cases} totals read correctly,
+    ~1.7s and ${reader_cost:.5f} per receipt.</p>
 </section>
 
 <!-- 10 ----------------------------------------------------------------- -->
